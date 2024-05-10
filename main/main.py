@@ -115,6 +115,9 @@ if not os.path.exists('responses/'):
 
 image_files = os.listdir('imgs/')
 
+# todo
+# 이 파트 함수든 뭐든으로 만들어서 깔끔하게 정리
+
 for image_name in image_files:
     tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
