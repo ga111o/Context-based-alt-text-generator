@@ -76,7 +76,6 @@ conversational_memory = ConversationBufferWindowMemory(
     return_messages=True
 )
 
-
 llm = ChatOllama(
     model = "llama3:8b",
     temperature=0.1,
@@ -105,6 +104,8 @@ if not os.path.exists('responses/'):
 image_files = os.listdir('imgs/')
 
 for image_name in image_files:
+    tools = [ImageCaptionTool(), ObjectDetectionTool()]
+
     image_path = 'imgs/' + image_name
     response = agent.run('{}, this is the image path: {}'.format(user_question, image_path))
     print(image_path)
@@ -125,3 +126,5 @@ for image_name in image_files:
     
     with open(response_file_path, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+# 이름 바꾸고 /main 디렉토리로 옮기기
