@@ -1,2 +1,4 @@
 env
 .vscode
+test-source/testing
+main/__pycache__
