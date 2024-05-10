@@ -1,6 +1,3 @@
-from tempfile import NamedTemporaryFile
-
-import streamlit as st
 from langchain.agents import initialize_agent
 from langchain.chat_models import ChatOllama
 from langchain.callbacks import StreamingStdOutCallbackHandler
@@ -11,7 +8,6 @@ from tools import ImageCaptionTool, ObjectDetectionTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
-
 
 def get_image_caption(image_path):
     """
@@ -37,7 +33,6 @@ def get_image_caption(image_path):
     caption = processor.decode(output[0], skip_special_tokens=True)
 
     return caption
-
 
 def detect_objects(image_path):
     """
@@ -70,11 +65,6 @@ def detect_objects(image_path):
 
     return detections
 
-
-# if __name__ == '__main__':
-#     image_path = '/home/phillip/Desktop/todays_tutorial/52_langchain_ask_questions_video/code/test.jpg'
-#     detections = detect_objects(image_path)
-#     print(detections)
 
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
