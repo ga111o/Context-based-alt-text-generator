@@ -8,8 +8,10 @@ from tools import ImageCaptionTool, ObjectDetectionTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
+
 import os
 import json
+import tempfile
 
 def get_image_caption(image_path):
     """
@@ -93,6 +95,16 @@ agent = initialize_agent(
     early_stopping_method='generate'
 )
 
+agent = initialize_agent(
+    agent="chat-conversational-react-description",
+    tools=tools,
+    llm=llm,
+    max_iterations=5,
+    verbose=True,
+    memory=conversational_memory,
+    early_stopping_method='generate'
+)
+
 context = "very happy situation" # 주변 div의 context 내용이 포함됨
 language = "korean" # 확장 프로그램에서 언어 설정 가능토록 할 것.
 # user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
@@ -106,12 +118,30 @@ image_files = os.listdir('imgs/')
 for image_name in image_files:
     tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
-    image_path = 'imgs/' + image_name
-    response = agent.run('{}, this is the image path: {}'.format(user_question, image_path))
-    print(image_path)
-    print(response)
-    
-    response_file_path = os.path.join('responses/', "output.json")
+    original_image_path = os.path.join('imgs', image_name)
+    print("---original img path:", original_image_path)
+
+    if not os.path.exists(original_image_path):
+        print(f"---can't find: {original_image_path}")
+        continue
+
+    try:
+        with Image.open(original_image_path) as img:
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp:
+                img.save(tmp.name)
+                image_path = tmp.name
+                print("---temp img path:", image_path)
+                try:
+                    response = agent.run(f'{user_question}, image path: {image_path}')
+                except FileNotFoundError as e:
+                    print(f"can't open: {e}")   
+    except FileNotFoundError as e:
+        print(f"can't open: {e}")
+        continue
+
+    print("---response:", response)
+
+    response_file_path = os.path.join('responses', "output.json")
     
     if os.path.exists(response_file_path):
         with open(response_file_path, 'r', encoding='utf-8') as file:
@@ -126,3 +156,12 @@ for image_name in image_files:
     
     with open(response_file_path, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+os.remove("__pycache__/tools.cpython-311.pyc")
+# os.remove("responses/outputs.json") # 이거 보내고 변경 되면 삭제하도록
+
+######################################
+# 이런 방식으로 이름 넣으면 될수도
+# f.write(file.getbuffer())
+# image_path = f.name
+#
