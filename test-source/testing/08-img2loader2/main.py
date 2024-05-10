@@ -8,6 +8,8 @@ from tools import ImageCaptionTool, ObjectDetectionTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
+import os
+import json
 
 def get_image_caption(image_path):
     """
@@ -92,9 +94,34 @@ agent = initialize_agent(
     early_stopping_method='generate'
 )
 
-user_question = "Describe the visual elements of the image in one line."
-image_path = "imgs/0.jpg"
+context = "very happy situation"
+language = "korean"
+# user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
+user_question = f"Describe the visual elements of the image in one line based {context}."
 
-if user_question and user_question != "":
+if not os.path.exists('responses/'):
+    os.makedirs('responses/')
+
+image_files = os.listdir('imgs/')
+
+for image_name in image_files:
+    image_path = 'imgs/' + image_name
     response = agent.run('{}, this is the image path: {}'.format(user_question, image_path))
+    print(image_path)
     print(response)
+    
+    response_file_path = os.path.join('responses/', "output.json")
+    
+    if os.path.exists(response_file_path):
+        with open(response_file_path, 'r', encoding='utf-8') as file:
+            try:
+                data = json.load(file)
+            except json.JSONDecodeError:
+                data = {}
+    else:
+        data = {}
+    
+    data[image_name] = {"image_name": image_name, "response": response}
+    
+    with open(response_file_path, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
