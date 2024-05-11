@@ -1,18 +1,26 @@
 {
     "21234123412341234.jpg": {
         "image_name": "21234123412341234.jpg",
-        "response": "A joyful scene featuring a book with an illustration of fish, conveying a sense of happiness."
+        "response": "The visual elements of the image depict a happy scene featuring a close-up shot of a book with a picture of fish on it."
+    },
+    "0.jpg": {
+        "image_name": "0.jpg",
+        "response": "The visual elements of the image depict a happy scene featuring a close-up shot of a book with a picture of fish on it."
     },
     "4123412341123412.jpeg": {
         "image_name": "4123412341123412.jpeg",
-        "response": "A joyful scene featuring a book with an illustration of fish, conveying a sense of happiness."
+        "response": "The visual elements of the image depict a happy scene featuring a mountain with a metal railing at its top."
+    },
+    "2.jpg": {
+        "image_name": "2.jpg",
+        "response": "There is a metal railing on the top of a mountain in a very happy situation."
     },
     "3123412341234123.jpeg": {
         "image_name": "3123412341234123.jpeg",
-        "response": "A joyful scene featuring a book with an illustration of fish, conveying a sense of happiness."
+        "response": "The visual elements of the image depict a happy scene featuring a smoke stack with a blue sky in the background."
     },
     "01234123412342134.jpg": {
         "image_name": "01234123412342134.jpg",
-        "response": "A joyful scene featuring an anime character with a quote about being a hero, conveying a sense of happiness."
+        "response": "The visual elements of the image depict a happy scene featuring an anime character with a quote about being a hero."
     }
 }
