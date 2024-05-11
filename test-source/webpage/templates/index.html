@@ -4,24 +4,31 @@
     <title>img page</title>
   </head>
   <body>
+    <h1>website with imgs</h1>
+
     <img
       src="{{ url_for('static', filename='01234123412342134.jpg') }}"
       style="width: 300px"
     />
+    <p>img without alt</p>
+    <br /><br /><br />
     <div class="test">
       <img
         src="{{ url_for('static', filename='3123412341234123.jpeg') }}"
         alt="Smoke is coming from the chimney based on the clear sky."
         style="width: 300px"
       />
+      <p>img with alt</p>
+      <br /><br /><br />
     </div>
     <div>
       <div>
-        <h1>Hello!</h1>
         <img
           src="{{ url_for('static', filename='4123412341123412.jpeg') }}"
           style="width: 300px"
         />
+        <p>img without alt</p>
+        <br /><br /><br />
       </div>
     </div>
   </body>
