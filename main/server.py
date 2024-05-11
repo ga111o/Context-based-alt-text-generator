@@ -30,8 +30,10 @@ def wait_for_file(file_path, timeout=60):
 # 함수 너무 길어지는 거 나눠야할듯
 @app.route('/url')
 def get_url_n_img():
-    if os.path.exists("imgs/"):
+    if os.path.exists("imgs/"): # 파일 너무 꼬이는데....
         shutil.rmtree("imgs/")
+    os.remove("__pycache__/tools.cpython-311.pyc")
+    os.remove("responses/output.json")
     
     url = request.args.get('url', default='', type=str)
     output_folder = "./imgs"
