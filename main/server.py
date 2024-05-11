@@ -1,10 +1,12 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 import os
 import requests
 from bs4 import BeautifulSoup
 from mimetypes import guess_extension
-from urllib.parse import urljoin  
-
+from urllib.parse import urljoin
+import subprocess
+import time
+from requests.exceptions import ConnectionError
 
 app = Flask(__name__)
 
@@ -12,8 +14,16 @@ app = Flask(__name__)
 def working():
     return "working..."
 
-from requests.exceptions import ConnectionError
+def wait_for_file(file_path, timeout=60):
+    start_time = time.time()
+    while not os.path.exists(file_path):
+        time.sleep(1)
+        if time.time() - start_time > timeout:
+            return False
+    return True
 
+# todo
+# 함수 너무 길어지는 거 나눠야할듯
 @app.route('/url')
 def get_url_n_img():
     url = request.args.get('url', default='', type=str)
@@ -30,7 +40,6 @@ def get_url_n_img():
         return "connection error 2"
 
     soup = BeautifulSoup(response.content, "html.parser")
-
     img_tags = soup.find_all("img")
 
     for i, img in enumerate(img_tags):
@@ -50,16 +59,19 @@ def get_url_n_img():
                                 img_file.write(chunk)
                         print(f"download: {img_path}")
                 except ConnectionError:
-                    print(f"Failed to download image at {img_url}")
+                    print(f"failed download image: {img_url}")
 
-    return f"url: {url}, download done"
+    subprocess.call(['python', 'add-alt.py'])
+
+    if wait_for_file('./responses/output.json'):
+        return f"url: {url}, download done & generate output.json"
+    else:
+        return "failed(timeout)"
 
 @app.route('/output')
 def output_json():
     with open('./responses/output.json', 'r', encoding='utf-8') as file:
         data = file.read()
-
-    from flask import Response
     return Response(data, mimetype='application/json')
 
 if __name__ == '__main__':
