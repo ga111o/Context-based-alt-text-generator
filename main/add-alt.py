@@ -13,6 +13,10 @@ import os
 import json
 import tempfile
 
+os.remove("__pycache__/tools.cpython-311.pyc")
+os.remove("responses/output.json")
+
+
 def get_image_caption(image_path):
     """
     Generates a short caption for the provided image.
@@ -159,12 +163,3 @@ for image_name in image_files:
     
     with open(response_file_path, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
-
-os.remove("__pycache__/tools.cpython-311.pyc")
-os.remove("responses/output.json")
-os.remove("imgs")
-######################################
-# 이런 방식으로 이름 넣으면 될수도
-# f.write(file.getbuffer())
-# image_path = f.name
-#
