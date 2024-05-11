@@ -1,9 +1,10 @@
 ### llm 이용해서 이미지 alt 추가하기
 
 1.  확장프로그램이 url을 서버로 보냄 -> done
-2.  서버가 받으면 llm에 넣고 output.json이 나올 때까지 기다림
-3.  output.json이 나오면 어떠한 방법으로 확장프로그램에게 알리고, alt 변경
-4.  변경 후, output.json, 다운받은 이미지들, pycache 삭제
+2.  서버가 url에 있는 이미지 다운로드 -> done
+3.  이미지 다운로드가 완료되면, add-alt.py 구동, output.json이 나올 때까지 기다리기
+4.  그냥 비동기로 /output 있는지 확인
+5.  변경 후, output.json, 다운받은 이미지들, pycache 삭제
 
 json 썼다 지웠다 하지말고 그냥 db 쓸까싶긴 한데
 이미지 이름이 겹칠 경우 어케 처리해야 하지
