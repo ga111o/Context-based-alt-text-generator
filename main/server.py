@@ -7,6 +7,7 @@ from urllib.parse import urljoin, urlparse
 import subprocess
 import time
 from requests.exceptions import ConnectionError
+import shutil
 
 from flask_cors import CORS
 
@@ -29,6 +30,9 @@ def wait_for_file(file_path, timeout=60):
 # 함수 너무 길어지는 거 나눠야할듯
 @app.route('/url')
 def get_url_n_img():
+    if os.path.exists("imgs/"):
+        shutil.rmtree("imgs/")
+    
     url = request.args.get('url', default='', type=str)
     output_folder = "./imgs"
 
