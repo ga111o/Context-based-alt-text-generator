@@ -161,8 +161,8 @@ for image_name in image_files:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 os.remove("__pycache__/tools.cpython-311.pyc")
-# os.remove("responses/outputs.json") # 이거 보내고 변경 되면 삭제하도록
-
+os.remove("responses/output.json")
+os.remove("imgs")
 ######################################
 # 이런 방식으로 이름 넣으면 될수도
 # f.write(file.getbuffer())
