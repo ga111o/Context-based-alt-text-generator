@@ -54,7 +54,6 @@ def get_url_n_img():
                 full_img_url = urljoin(url, img_url)
                 img_name = os.path.basename(urlparse(full_img_url).path) 
 
-                # # 파일명 중복 방지를 위한 처리
                 # original_img_name = img_name
                 # count = 1
                 # while img_name in downloaded_files:
