@@ -13,10 +13,6 @@ import os
 import json
 import tempfile
 
-os.remove("__pycache__/tools.cpython-311.pyc")
-os.remove("responses/output.json")
-
-
 def get_image_caption(image_path):
     """
     Generates a short caption for the provided image.
