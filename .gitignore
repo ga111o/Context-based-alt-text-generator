@@ -2,3 +2,5 @@ env
 .vscode
 test-source/testing
 main/__pycache__
+main/responses/
+main/imgs
