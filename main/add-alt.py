@@ -1,7 +1,11 @@
+from iso639 import Language
+from joblib import Memory
 from langchain.agents import initialize_agent
 from langchain.chat_models import ChatOllama, ChatOpenAI
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from tools import ImageCaptionTool, ObjectDetectionTool
 
@@ -26,7 +30,11 @@ def get_image_caption(image_path):
     image = Image.open(image_path).convert('RGB')
 
     model_name = "Salesforce/blip-image-captioning-large"
-    device = "cpu"  # cuda
+
+    # 나중에 cuda로 돌린다면, half로 돌리는 게 좋을듯
+    # processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+    # model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
+    device = "cpu"
 
     processor = BlipProcessor.from_pretrained(model_name)
     model = BlipForConditionalGeneration.from_pretrained(model_name).to(device)
@@ -82,6 +90,20 @@ llm = ChatOpenAI(
     callbacks=[StreamingStdOutCallbackHandler()],
 )
 
+# from transformers import AutoTokenizer, AutoModelForCausalLM
+
+# tokenizer = AutoTokenizer.from_pretrained("psymon/KoLlama2-7b")
+# model = AutoModelForCausalLM.from_pretrained("psymon/KoLlama2-7b")
+
+# model_name = "psymon/KoLlama2-7b"
+# model_kwargs = {'device': 'cpu'}
+# encode_kwargs = {'normalize_embeddings': False}
+# llm = HuggingFaceEmbeddings(
+#     model=model,
+#     model_kwargs=model_kwargs,
+#     encode_kwargs=encode_kwargs
+# )
+
 # llm = ChatOllama(
 #     model = "llama3:8b",
 #     temperature=0.1,
@@ -101,8 +123,8 @@ agent = initialize_agent(
 
 context = "very happy situation" # 주변 div의 context 내용이 포함됨
 language = "korean" # 확장 프로그램에서 언어 설정 가능토록 할 것.
-# user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
-user_question = f"Describe the visual elements of the image in one line based {context}."
+user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
+# user_question = f"Describe the visual elements of the image in one line based {context}."
 
 if not os.path.exists('responses/'):
     os.makedirs('responses/')
@@ -129,6 +151,7 @@ for image_name in image_files:
                 image_path = tmp.name
                 print("---temp img path:", image_path)
                 try:
+                    print(f'===========user question: {user_question}')
                     response = agent.run(f'{user_question}, image path: {image_path}')
                 except FileNotFoundError as e:
                     print(f"can't open: {e}")   
