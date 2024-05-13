@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "add alt",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
+  "options_page": "options.html",
   "background": {
     "service_worker": "background.js"
   },
@@ -12,5 +13,7 @@
       "js": ["content.js"]
     }
   ],
-  "action": {}
+  "browser_action": {
+    "default_popup": "options.html"
+  }
 }

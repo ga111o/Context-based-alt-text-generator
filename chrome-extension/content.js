@@ -1,15 +1,27 @@
-const currentUrl = window.location.href;
-const targetUrl = `http://127.0.0.1:9990/url?url=${encodeURIComponent(
-  currentUrl
-)}`;
+// content.js
 
-fetch(targetUrl)
-  .then((response) => {
-    // console.log("success - fetch(targetUrl):", response);
-  })
-  .catch((error) => {
-    // console.error("error - fetch(targetUrl):", error);
+const currentUrl = window.location.href;
+
+function fetchWithUserLanguage() {
+  chrome.storage.sync.get("language", function (data) {
+    let language = data.language;
+    if (!language) {
+      language = "English";
+    }
+
+    const targetUrl = `http://127.0.0.1:9990/url?url=${encodeURIComponent(
+      currentUrl
+    )}&language=${encodeURIComponent(language)}`;
+
+    fetch(targetUrl)
+      .then((response) => {
+        // console.log("success - fetch(targetUrl):", response);
+      })
+      .catch((error) => {
+        // console.error("error - fetch(targetUrl):", error);
+      });
   });
+}
 
 async function updateImageAltText() {
   const response = await fetch("http://127.0.0.1:9990/output");
@@ -29,12 +41,14 @@ async function updateImageAltText() {
   });
 }
 
-// 음.... 이렇게 하는 방법밖에 없는 건가
 setInterval(function () {
   console.log("working...");
+  console.log(`targetUrl: ${targetUrl}`);
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", updateImageAltText);
   } else {
     updateImageAltText();
   }
 }, 10000);
+
+fetchWithUserLanguage();
