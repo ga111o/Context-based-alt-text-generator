@@ -13,6 +13,11 @@ import os
 import json
 import tempfile
 
+blip_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cpu")
+detr_processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
+detr_model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
+
 def get_image_caption(image_path):
     """
     Generates a short caption for the provided image.
@@ -56,8 +61,6 @@ def detect_objects(image_path):
     inputs = processor(images=image, return_tensors="pt")
     outputs = model(**inputs)
 
-    # convert outputs (bounding boxes and class logits) to COCO API
-    # let's only keep detections with score > 0.9
     target_sizes = torch.tensor([image.size[::-1]])
     results = processor.post_process_object_detection(outputs, target_sizes=target_sizes, threshold=0.9)[0]
 
@@ -74,7 +77,7 @@ tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
 conversational_memory = ConversationBufferWindowMemory(
     memory_key='chat_history',
-    k=5,
+    k=0,
     return_messages=True
 )
 
@@ -94,6 +97,15 @@ agent = initialize_agent(
     memory=conversational_memory,
     early_stopping_method='generate'
 )
+
+# agent = initialize_agent(
+#     agent="chat-conversational-react-description",
+#     tools=tools,
+#     llm=llm,
+#     max_iterations=5,
+#     verbose=True,
+#     early_stopping_method='generate'
+# )
 
 context = "very happy situation" # 주변 div의 context 내용이 포함됨
 language = "korean" # 확장 프로그램에서 언어 설정 가능토록 할 것.
@@ -124,6 +136,10 @@ for image_name in image_files:
                 img.save(tmp.name)
                 image_path = tmp.name
                 print("---temp img path:", image_path)
+
+                detr_processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
+                detr_model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
+
                 try:
                     response = agent.run(f'{user_question}, image path: {image_path}')
                 except FileNotFoundError as e:
@@ -133,7 +149,7 @@ for image_name in image_files:
         continue
 
     print("---response:", response)
-
+    
     response_file_path = os.path.join('responses', "output.json")
     
     if os.path.exists(response_file_path):
