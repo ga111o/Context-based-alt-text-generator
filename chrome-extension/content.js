@@ -43,6 +43,6 @@ setInterval(function () {
   } else {
     updateImageAltText();
   }
-}, 10000);
+}, 5000);
 
 fetchWithUserLanguage();
