@@ -13,11 +13,6 @@ import os
 import json
 import tempfile
 
-blip_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cpu")
-detr_processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
-detr_model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
-
 def get_image_caption(image_path):
     """
     Generates a short caption for the provided image.
@@ -98,15 +93,6 @@ agent = initialize_agent(
     early_stopping_method='generate'
 )
 
-# agent = initialize_agent(
-#     agent="chat-conversational-react-description",
-#     tools=tools,
-#     llm=llm,
-#     max_iterations=5,
-#     verbose=True,
-#     early_stopping_method='generate'
-# )
-
 context = "very happy situation" # 주변 div의 context 내용이 포함됨
 language = "korean" # 확장 프로그램에서 언어 설정 가능토록 할 것.
 # user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
@@ -136,9 +122,6 @@ for image_name in image_files:
                 img.save(tmp.name)
                 image_path = tmp.name
                 print("---temp img path:", image_path)
-
-                detr_processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
-                detr_model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
 
                 try:
                     response = agent.run(f'{user_question}, image path: {image_path}')
