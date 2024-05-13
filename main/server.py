@@ -8,6 +8,7 @@ import subprocess
 import time
 from requests.exceptions import ConnectionError
 import shutil
+import json
 
 from flask_cors import CORS
 
@@ -34,21 +35,26 @@ def get_url_n_img():
         shutil.rmtree("imgs/")
     if os.path.exists("__pycache__/tools.cpython-311.pyc"):
         os.remove("__pycache__/tools.cpython-311.pyc")
-    if os.path.exists("responses/output.json"):
-        os.remove("responses/output.json")
-    
+    if os.path.exists("responses/"): # 이건 여기가 아니라 다른 곳에서 관리해야 할 거 같은데
+        shutil.rmtree("responses/")
     url = request.args.get('url', default='', type=str)
-    output_folder = "./imgs"
+    img_folder = "./imgs"
+    response_folder = "./responses"
 
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    if not os.path.exists(img_folder):
+        os.makedirs(img_folder)
+
+    if not os.path.exists(response_folder):
+        os.makedirs(response_folder)
+
+    response_data = {}
 
     try:
         response = requests.get(url)
         if response.status_code != 200:
-            return "connection error 1"
+            print("connection error 1")
     except ConnectionError:
-        return "connection error 2"
+        print("connection error 2")
 
     soup = BeautifulSoup(response.content, "html.parser")
     img_tags = soup.find_all("img")
@@ -62,25 +68,30 @@ def get_url_n_img():
                 full_img_url = urljoin(url, img_url)
                 img_name = os.path.basename(urlparse(full_img_url).path) 
 
-                # original_img_name = img_name
-                # count = 1
-                # while img_name in downloaded_files:
-                #     name, ext = os.path.splitext(original_img_name)
-                #     img_name = f"{name}_{count}{ext}"
-                #     count += 1
-
                 downloaded_files.add(img_name)
 
                 try:
                     img_response = requests.get(full_img_url, stream=True)
                     if img_response.status_code == 200:
-                        img_path = os.path.join(output_folder, img_name)
+                        img_path = os.path.join(img_folder, img_name)
                         with open(img_path, "wb") as img_file:
                             for chunk in img_response.iter_content(chunk_size=8192):
                                 img_file.write(chunk)
                         print(f"download: {img_path}")
+
+                        # 상위 태그 내의 모든 텍스트를 넣는 게 맞나 싶음..
+                        # 근데 이거 말고는 딱히 방법이 안보이기도 하고..
+                        context = img.parent.get_text(strip=True)
+                        response_data[img_name] = {
+                            "image_path": img_path,
+                            "context": context,
+                            "language": request.args.get('language', default='', type=str)
+                        }
                 except ConnectionError:
                     print(f"failed download image: {img_url}")
+
+    with open('./responses/input.json', 'w', encoding='utf-8') as json_file:
+        json.dump(response_data, json_file, indent=4, ensure_ascii=False)
 
     subprocess.call(['python', 'add-alt.py'])
 
