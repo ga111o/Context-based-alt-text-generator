@@ -1,5 +1,5 @@
 from langchain.agents import initialize_agent
-from langchain.chat_models import ChatOllama
+from langchain.chat_models import ChatOllama, ChatOpenAI
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 
@@ -76,12 +76,18 @@ conversational_memory = ConversationBufferWindowMemory(
     return_messages=True
 )
 
-llm = ChatOllama(
-    model = "llama3:8b",
+llm = ChatOpenAI(
     temperature=0.1,
     streaming=True,
-    callbacks=[StreamingStdOutCallbackHandler()]
+    callbacks=[StreamingStdOutCallbackHandler()],
 )
+
+# llm = ChatOllama(
+#     model = "llama3:8b",
+#     temperature=0.1,
+#     streaming=True,
+#     callbacks=[StreamingStdOutCallbackHandler()]
+# )
 
 agent = initialize_agent(
     agent="chat-conversational-react-description",
@@ -122,7 +128,6 @@ for image_name in image_files:
                 img.save(tmp.name)
                 image_path = tmp.name
                 print("---temp img path:", image_path)
-
                 try:
                     response = agent.run(f'{user_question}, image path: {image_path}')
                 except FileNotFoundError as e:
