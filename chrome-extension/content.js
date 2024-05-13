@@ -1,4 +1,5 @@
 let debugMode = false;
+const currentUrl = window.location.href;
 
 chrome.storage.sync.get(["language", "debugMode"], function (data) {
   let language = data.language || "English";
