@@ -1,3 +1,4 @@
+from click import prompt
 from iso639 import Language
 from joblib import Memory
 from langchain.agents import initialize_agent
@@ -6,6 +7,7 @@ from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from langchain.prompts import PromptTemplate, ChatPromptTemplate
 
 from tools import ImageCaptionTool, ObjectDetectionTool
 
@@ -84,11 +86,6 @@ conversational_memory = ConversationBufferWindowMemory(
     return_messages=True
 )
 
-llm = ChatOpenAI(
-    temperature=0.1,
-    streaming=True,
-    callbacks=[StreamingStdOutCallbackHandler()],
-)
 
 # from transformers import AutoTokenizer, AutoModelForCausalLM
 
@@ -104,12 +101,22 @@ llm = ChatOpenAI(
 #     encode_kwargs=encode_kwargs
 # )
 
-# llm = ChatOllama(
-#     model = "llama3:8b",
+# llm = ChatOpenAI(
 #     temperature=0.1,
 #     streaming=True,
-#     callbacks=[StreamingStdOutCallbackHandler()]
+#     callbacks=[StreamingStdOutCallbackHandler()],
 # )
+
+llm = ChatOllama(
+    model = "llama3:8b",
+    temperature=0.1,
+    streaming=True,
+    callbacks=[StreamingStdOutCallbackHandler()]
+)
+
+# PREFIX = '''
+# Describe the visual elements of the image in one line based {context}. and translate to {language}
+# '''
 
 agent = initialize_agent(
     agent="chat-conversational-react-description",
@@ -118,7 +125,10 @@ agent = initialize_agent(
     max_iterations=5,
     verbose=True,
     memory=conversational_memory,
-    early_stopping_method='generate'
+    early_stopping_method='generate',
+    # agent_kwargs={
+    #     'prefix': PREFIX, 
+    # }
 )
 
 if not os.path.exists('responses/'):
@@ -132,10 +142,6 @@ image_files = list(image_info.keys())
 # todo
 # 이 파트 함수든 뭐든으로 만들어서 깔끔하게 정리
 for image_name in image_files:
-    context = image_info[image_name]["context"]
-    language = image_info[image_name]["language"]
-    user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
-
     tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
     original_image_path = os.path.join('imgs', image_name)
@@ -152,10 +158,21 @@ for image_name in image_files:
                 image_path = tmp.name
                 print("---temp img path:", image_path)
                 try:
-                    print(f'===========user question: {user_question}')
+                    context = image_info[image_name]["context"]
+                    language = image_info[image_name]["language"]
+                    
+                    user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
                     response = agent.run(f'{user_question}, image path: {image_path}')
+
+                    # PREFIX = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
+                                                                                                                                   
+                    # print(f'===========PREFIX: {PREFIX}')
+                    # response = agent.run(f'image path: {image_path}')
+                    # # response = agent.run()
+                    # response = agent.ainvoke(input= ) # nomad coder 확인해서 input 값 확인
+
                 except FileNotFoundError as e:
-                    print(f"can't open: {e}")   
+                    print(f"can't open: {e}")
     except FileNotFoundError as e:
         print(f"can't open: {e}")
         continue
