@@ -109,5 +109,14 @@ def output_json():
     except FileNotFoundError:
         return make_response('', 404)
     
+@app.route('/input')
+def intput_json():
+    try:
+        with open('./responses/input.json', 'r', encoding='utf-8') as file:
+            data = file.read()
+        return Response(data, mimetype='application/json')
+    except FileNotFoundError:
+        return make_response('', 404)
+    
 if __name__ == '__main__':
     app.run(debug=True, port=9990)
