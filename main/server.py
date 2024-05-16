@@ -15,7 +15,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/')
+@app.route("/")
 def working():
 	return "working..."
 
@@ -27,19 +27,27 @@ def wait_for_file(file_path, timeout=60):
 			return False
 	return True
 
+# from datetime import datetime
+
+# now = datetime.now()
+# session = now.strftime("%H%M%S%f")[:-3]
+# session = session + "test"
+# print(session)
+
+
 # todo
 # 함수 너무 길어지는 거 나눠야할듯
-@app.route('/url')
+@app.route("/url")
 def get_url_n_img():
-    if os.path.exists("imgs/"): # 이건 여기가 아니라 다른 곳에서 관리해야 할 거 같은데
-        shutil.rmtree("imgs/")
+
     if os.path.exists("__pycache__/tools.cpython-311.pyc"):
         os.remove("__pycache__/tools.cpython-311.pyc")
-    if os.path.exists("responses/"): # 이건 여기가 아니라 다른 곳에서 관리해야 할 거 같은데
-        shutil.rmtree("responses/")
-    url = request.args.get('url', default='', type=str)
-    img_folder = "./imgs"
-    response_folder = "./responses"
+
+    url = request.args.get("url", default="", type=str)
+    session = request.args.get("session", default="", type=str)
+
+    img_folder = f"./source/{session}/imgs"
+    response_folder = f"./source/{session}/responses"
 
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
@@ -62,7 +70,7 @@ def get_url_n_img():
     downloaded_files = set()  
 
     for i, img in enumerate(img_tags):
-        if not img.has_attr('alt'):
+        if not img.has_attr("alt"):
             img_url = img.get("src")
             if img_url:
                 full_img_url = urljoin(url, img_url)
@@ -79,44 +87,42 @@ def get_url_n_img():
                                 img_file.write(chunk)
                         print(f"download: {img_path}")
 
-                        # 상위 태그 내의 모든 텍스트를 넣는 게 맞나 싶음..
-                        # 근데 이거 말고는 딱히 방법이 안보이기도 하고..
                         context = img.parent.get_text(strip=True)
                         response_data[img_name] = {
                             "image_path": img_path,
                             "context": context,
-                            "language": request.args.get('language', default='', type=str)
+                            "language": request.args.get("language", default="", type=str)
                         }
                 except ConnectionError:
                     print(f"failed download image: {img_url}")
 
-    with open('./responses/input.json', 'w', encoding='utf-8') as json_file:
+    with open(f"./{response_folder}/input.json", "w", encoding="utf-8") as json_file:
         json.dump(response_data, json_file, indent=4, ensure_ascii=False)
 
-    subprocess.call(['python', 'add-alt.py'])
+    subprocess.call(["python", "add-alt.py", session])
 
-    if wait_for_file('./responses/output.json'):
+    if wait_for_file(f"./{response_folder}/output.json"):
         return f"url: {url}, download done & generate output.json"
     else:
         return "failed(timeout)"
 
-@app.route('/output')
-def output_json():
+@app.route(f"/<user_input>/output")
+def output_json(user_input):
     try:
-        with open('./responses/output.json', 'r', encoding='utf-8') as file:
+        with open(f"./source/{user_input}/responses/output.json", "r", encoding="utf-8") as file:
             data = file.read()
-        return Response(data, mimetype='application/json')
+        return Response(data, mimetype="application/json")
     except FileNotFoundError:
-        return make_response('', 404)
+        return make_response("session not exist", 450)
     
-@app.route('/input')
-def intput_json():
+@app.route(f"/<user_input>/input")
+def intput_json(user_input):
     try:
-        with open('./responses/input.json', 'r', encoding='utf-8') as file:
+        with open(f"./source/{user_input}/responses/input.json", "r", encoding="utf-8") as file:
             data = file.read()
-        return Response(data, mimetype='application/json')
+        return Response(data, mimetype="application/json")
     except FileNotFoundError:
-        return make_response('', 404)
+        return make_response("session not exist", 450)
     
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True, port=9990)

@@ -15,9 +15,11 @@ from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageP
 from PIL import Image
 import torch
 
+import requests
 import os
 import json
 import tempfile
+import sys
 
 def get_image_caption(image_path):
     """
@@ -29,7 +31,7 @@ def get_image_caption(image_path):
     Returns:
         str: A string representing the caption for the image.
     """
-    image = Image.open(image_path).convert('RGB')
+    image = Image.open(image_path).convert("RGB")
 
     model_name = "Salesforce/blip-image-captioning-large"
 
@@ -41,7 +43,7 @@ def get_image_caption(image_path):
     processor = BlipProcessor.from_pretrained(model_name)
     model = BlipForConditionalGeneration.from_pretrained(model_name).to(device)
 
-    inputs = processor(image, return_tensors='pt').to(device)
+    inputs = processor(image, return_tensors="pt").to(device)
     output = model.generate(**inputs, max_new_tokens=20)
 
     caption = processor.decode(output[0], skip_special_tokens=True)
@@ -56,9 +58,9 @@ def detect_objects(image_path):
         image_path (str): The path to the image file.
 
     Returns:
-        str: A string with all the detected objects. Each object as '[x1, x2, y1, y2, class_name, confindence_score]'.
+        str: A string with all the detected objects. Each object as "[x1, x2, y1, y2, class_name, confindence_score]".
     """
-    image = Image.open(image_path).convert('RGB')
+    image = Image.open(image_path).convert("RGB")
 
     processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
     model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50")
@@ -71,9 +73,9 @@ def detect_objects(image_path):
 
     detections = ""
     for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
-        detections += '[{}, {}, {}, {}]'.format(int(box[0]), int(box[1]), int(box[2]), int(box[3]))
-        detections += ' {}'.format(model.config.id2label[int(label)])
-        detections += ' {}\n'.format(float(score))
+        detections += "[{}, {}, {}, {}]".format(int(box[0]), int(box[1]), int(box[2]), int(box[3]))
+        detections += " {}".format(model.config.id2label[int(label)])
+        detections += " {}\n".format(float(score))
 
     return detections
 
@@ -81,42 +83,35 @@ def detect_objects(image_path):
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
 conversational_memory = ConversationBufferWindowMemory(
-    memory_key='chat_history',
+    memory_key="chat_history",
     k=0,
     return_messages=True
 )
 
 
-# from transformers import AutoTokenizer, AutoModelForCausalLM
+if len(sys.argv) > 1:
+    session = sys.argv[1]
+    print("===========================================\nsession:", session)
+else:
+    print("=================\nsession 전달 X \n==================")
 
-# tokenizer = AutoTokenizer.from_pretrained("psymon/KoLlama2-7b")
-# model = AutoModelForCausalLM.from_pretrained("psymon/KoLlama2-7b")
 
-# model_name = "psymon/KoLlama2-7b"
-# model_kwargs = {'device': 'cpu'}
-# encode_kwargs = {'normalize_embeddings': False}
-# llm = HuggingFaceEmbeddings(
-#     model=model,
-#     model_kwargs=model_kwargs,
-#     encode_kwargs=encode_kwargs
-# )
-
-# llm = ChatOpenAI(
-#     temperature=0.1,
-#     streaming=True,
-#     callbacks=[StreamingStdOutCallbackHandler()],
-# )
-
-llm = ChatOllama(
-    model = "llama3:8b",
+llm = ChatOpenAI(
     temperature=0.1,
     streaming=True,
-    callbacks=[StreamingStdOutCallbackHandler()]
+    callbacks=[StreamingStdOutCallbackHandler()],
 )
 
-# PREFIX = '''
+# llm = ChatOllama(
+#     model = "llama3:8b",
+#     temperature=0.1,
+#     streaming=True,
+#     callbacks=[StreamingStdOutCallbackHandler()]
+# )
+
+# PREFIX = """
 # Describe the visual elements of the image in one line based {context}. and translate to {language}
-# '''
+# """
 
 agent = initialize_agent(
     agent="chat-conversational-react-description",
@@ -125,16 +120,24 @@ agent = initialize_agent(
     max_iterations=5,
     verbose=True,
     memory=conversational_memory,
-    early_stopping_method='generate',
-    # agent_kwargs={
-    #     'prefix': PREFIX, 
-    # }
+    early_stopping_method="generate",
 )
 
-if not os.path.exists('responses/'):
-    os.makedirs('responses/')
+# responses 변수 따로 관리하는 게 좋을듯
 
-with open('responses/input.json', 'r', encoding='utf-8') as file:
+# 이건 왜 안되는 야
+# input_url = f"http://127.0.0.1:9990/source/{session}/input"
+# input_response = requests.get(input_url)
+# if input_response.status_code == 200:
+#     image_info = input_response.json()
+# else:
+#     print(f"============= fail--- get input.json {input_response.status_code} ==================")
+
+# import urllib.request, json 
+# with urllib.request.urlopen(f"http://127.0.0.1:9990/source/{session}/input") as url:
+#     image_info = json.load(url)
+
+with open(f'./source/{session}/responses/input.json', 'r', encoding='utf-8') as file:
     image_info = json.load(file)
 
 image_files = list(image_info.keys())
@@ -144,7 +147,7 @@ image_files = list(image_info.keys())
 for image_name in image_files:
     tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
-    original_image_path = os.path.join('imgs', image_name)
+    original_image_path = os.path.join("source", session, "imgs", image_name)
     print("---original img path:", original_image_path)
 
     if not os.path.exists(original_image_path):
@@ -153,7 +156,7 @@ for image_name in image_files:
 
     try:
         with Image.open(original_image_path) as img:
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
                 img.save(tmp.name)
                 image_path = tmp.name
                 print("---temp img path:", image_path)
@@ -162,14 +165,7 @@ for image_name in image_files:
                     language = image_info[image_name]["language"]
                     
                     user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
-                    response = agent.run(f'{user_question}, image path: {image_path}')
-
-                    # PREFIX = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
-                                                                                                                                   
-                    # print(f'===========PREFIX: {PREFIX}')
-                    # response = agent.run(f'image path: {image_path}')
-                    # # response = agent.run()
-                    # response = agent.ainvoke(input= ) # nomad coder 확인해서 input 값 확인
+                    response = agent.run(f"{user_question}, image path: {image_path}")
 
                 except FileNotFoundError as e:
                     print(f"can't open: {e}")
@@ -179,10 +175,10 @@ for image_name in image_files:
 
     print("---response:", response)
     
-    response_file_path = os.path.join('responses', "output.json")
+    response_file_path = os.path.join("source", session, "responses", "output.json")
     
     if os.path.exists(response_file_path):
-        with open(response_file_path, 'r', encoding='utf-8') as file:
+        with open(response_file_path, "r", encoding="utf-8") as file:
             try:
                 data = json.load(file)
             except json.JSONDecodeError:
@@ -192,5 +188,5 @@ for image_name in image_files:
     
     data[image_name] = {"image_name": image_name, "response": response}
     
-    with open(response_file_path, 'w', encoding='utf-8') as file:
+    with open(response_file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
