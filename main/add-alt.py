@@ -88,13 +88,11 @@ conversational_memory = ConversationBufferWindowMemory(
     return_messages=True
 )
 
-
 if len(sys.argv) > 1:
     session = sys.argv[1]
     print("===========================================\nsession:", session)
 else:
     print("=================\nsession 전달 X \n==================")
-
 
 llm = ChatOpenAI(
     temperature=0.1,
@@ -109,10 +107,6 @@ llm = ChatOpenAI(
 #     callbacks=[StreamingStdOutCallbackHandler()]
 # )
 
-# PREFIX = """
-# Describe the visual elements of the image in one line based {context}. and translate to {language}
-# """
-
 agent = initialize_agent(
     agent="chat-conversational-react-description",
     tools=tools,
@@ -123,20 +117,6 @@ agent = initialize_agent(
     early_stopping_method="generate",
 )
 
-# responses 변수 따로 관리하는 게 좋을듯
-
-# 이건 왜 안되는 야
-# input_url = f"http://127.0.0.1:9990/source/{session}/input"
-# input_response = requests.get(input_url)
-# if input_response.status_code == 200:
-#     image_info = input_response.json()
-# else:
-#     print(f"============= fail--- get input.json {input_response.status_code} ==================")
-
-# import urllib.request, json 
-# with urllib.request.urlopen(f"http://127.0.0.1:9990/source/{session}/input") as url:
-#     image_info = json.load(url)
-
 with open(f'./source/{session}/responses/input.json', 'r', encoding='utf-8') as file:
     image_info = json.load(file)
 
@@ -145,8 +125,6 @@ image_files = list(image_info.keys())
 # todo
 # 이 파트 함수든 뭐든으로 만들어서 깔끔하게 정리
 for image_name in image_files:
-    tools = [ImageCaptionTool(), ObjectDetectionTool()]
-
     original_image_path = os.path.join("source", session, "imgs", image_name)
     print("---original img path:", original_image_path)
 
