@@ -60,9 +60,9 @@ def get_url_n_img():
     try:
         response = requests.get(url)
         if response.status_code != 200:
-            print("connection error 1")
+            print("========== ERROR: response.status_code != 200")
     except ConnectionError:
-        print("connection error 2")
+        print("========== ERROR: connection error 2")
 
     soup = BeautifulSoup(response.content, "html.parser")
     img_tags = soup.find_all("img")
@@ -102,13 +102,19 @@ def get_url_n_img():
     subprocess.call(["python", "add-alt.py", session])
 
     if wait_for_file(f"./{response_folder}/output.json"):
+        print("확장 프로그램에게 '`output.json`이 생겼어요!'를 알려주는 방법이 뭐가 있을까..")
+        print("`output.json`이 업데이트 되었다는 것도 체크 가능한데, 업데이트 되었다는 걸 알려주는 방법을 모르겠네...")
         return f"url: {url}, download done & generate output.json"
     else:
         return "failed(timeout)"
 
+# todo
+# 1. 함수 안에 있는 변수를 다른 함수로 넘겨주고 싶음. 함수를 call 하는 방법 말고.
 @app.route(f"/<user_input>/output")
 def output_json(user_input):
-    try:
+    try:    
+        # response_folder = f"./source/{session}/responses" 이 함수에서 따로 선언을 해줘야 하나..
+
         with open(f"./source/{user_input}/responses/output.json", "r", encoding="utf-8") as file:
             data = file.read()
         return Response(data, mimetype="application/json")
