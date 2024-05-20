@@ -9,6 +9,8 @@ import time
 from requests.exceptions import ConnectionError
 import shutil
 import json
+from flask import Flask, request
+from task import get_url_n_img
 
 from flask_cors import CORS
 
@@ -107,6 +109,22 @@ def get_url_n_img():
         return f"url: {url}, download done & generate output.json"
     else:
         return "failed(timeout)"
+
+# from flask import Flask, request
+# from task import get_url_n_img
+
+# app = Flask(__name__)
+
+# @app.route("/url")
+# def handle_request():
+#     url = request.args.get("url", default="", type=str)
+#     session = request.args.get("session", default="", type=str)
+#     language = request.args.get("language", default="", type=str)
+
+#     # Celery를 통해 비동기 작업 요청
+#     get_url_n_img.delay(url, session, language)
+
+#     return "req done"
 
 # todo
 # 1. 함수 안에 있는 변수를 다른 함수로 넘겨주고 싶음. 함수를 call 하는 방법 말고.
