@@ -242,3 +242,4 @@ zipp==3.16.2
 flask==3.0.3
 langchain_community==0.0.38
 flask_cors==4.0.1
+celery==5.4.0
