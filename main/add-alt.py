@@ -127,7 +127,7 @@ image_files = list(image_info.keys())
 if DEBUG:
     test_path = f'./source/{session}/responses/'
     os.makedirs(test_path, exist_ok=True)
-    with open(os.path.join(test_path, 'test1'), 'w') as f:
+    with open(os.path.join(test_path, f'test1-{session}'), 'w') as f:
         pass
 
 # todo
@@ -143,7 +143,7 @@ for image_name in image_files:
     if DEBUG:
         test_path = f'./source/{session}/responses/'
         os.makedirs(test_path, exist_ok=True)
-        with open(os.path.join(test_path, 'test2'), 'w') as f:
+        with open(os.path.join(test_path, f'test2-{session}'), 'w') as f:
             pass
 
     try:
@@ -156,7 +156,7 @@ for image_name in image_files:
                 if DEBUG:
                     test_path = f'./source/{session}/responses/'
                     os.makedirs(test_path, exist_ok=True)
-                    with open(os.path.join(test_path, 'test2.1'), 'w') as f:
+                    with open(os.path.join(test_path, f'test2.1-{session}'), 'w') as f:
                         pass
 
                 try:
@@ -169,7 +169,7 @@ for image_name in image_files:
                     if DEBUG:
                         test_path = f'./source/{session}/responses/'
                         os.makedirs(test_path, exist_ok=True)
-                        with open(os.path.join(test_path, 'test2.2'), 'w') as f:
+                        with open(os.path.join(test_path, f'test2.2-{session}'), 'w') as f:
                             pass
 
                 except FileNotFoundError as e:
@@ -181,7 +181,7 @@ for image_name in image_files:
     if DEBUG:
         test_path = f'./source/{session}/responses/'
         os.makedirs(test_path, exist_ok=True)
-        with open(os.path.join(test_path, 'test3'), 'w') as f:
+        with open(os.path.join(test_path, f'test3-{session}'), 'w') as f:
             pass
     
     print("---response:", response)
@@ -200,7 +200,7 @@ for image_name in image_files:
     if DEBUG:
         test_path = f'./source/{session}/responses/'
         os.makedirs(test_path, exist_ok=True)
-        with open(os.path.join(test_path, 'test4'), 'w') as f:
+        with open(os.path.join(test_path, f'test4-{session}'), 'w') as f:
             pass
     
     data[image_name] = {"image_name": image_name, "response": response}
