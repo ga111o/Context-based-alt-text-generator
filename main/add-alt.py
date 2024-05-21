@@ -21,6 +21,8 @@ import json
 import tempfile
 import sys
 
+DEBUG = True
+
 def get_image_caption(image_path):
     """
     Generates a short caption for the provided image.
@@ -122,6 +124,12 @@ with open(f'./source/{session}/responses/input.json', 'r', encoding='utf-8') as 
 
 image_files = list(image_info.keys())
 
+if DEBUG:
+    test_path = f'./source/{session}/responses/'
+    os.makedirs(test_path, exist_ok=True)
+    with open(os.path.join(test_path, 'test1'), 'w') as f:
+        pass
+
 # todo
 # 이 파트 함수든 뭐든으로 만들어서 깔끔하게 정리
 for image_name in image_files:
@@ -132,25 +140,50 @@ for image_name in image_files:
         print(f"---can't find: {original_image_path}")
         continue
 
+    if DEBUG:
+        test_path = f'./source/{session}/responses/'
+        os.makedirs(test_path, exist_ok=True)
+        with open(os.path.join(test_path, 'test2'), 'w') as f:
+            pass
+
     try:
         with Image.open(original_image_path) as img:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
                 img.save(tmp.name)
                 image_path = tmp.name
                 print("---temp img path:", image_path)
+                
+                if DEBUG:
+                    test_path = f'./source/{session}/responses/'
+                    os.makedirs(test_path, exist_ok=True)
+                    with open(os.path.join(test_path, 'test2.1'), 'w') as f:
+                        pass
+
                 try:
                     context = image_info[image_name]["context"]
                     language = image_info[image_name]["language"]
                     
                     user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
                     response = agent.run(f"{user_question}, image path: {image_path}")
+                    
+                    if DEBUG:
+                        test_path = f'./source/{session}/responses/'
+                        os.makedirs(test_path, exist_ok=True)
+                        with open(os.path.join(test_path, 'test2.2'), 'w') as f:
+                            pass
 
                 except FileNotFoundError as e:
                     print(f"can't open: {e}")
     except FileNotFoundError as e:
         print(f"can't open: {e}")
         continue
-
+    
+    if DEBUG:
+        test_path = f'./source/{session}/responses/'
+        os.makedirs(test_path, exist_ok=True)
+        with open(os.path.join(test_path, 'test3'), 'w') as f:
+            pass
+    
     print("---response:", response)
     
     response_file_path = os.path.join("source", session, "responses", "output.json")
@@ -163,6 +196,12 @@ for image_name in image_files:
                 data = {}
     else:
         data = {}
+
+    if DEBUG:
+        test_path = f'./source/{session}/responses/'
+        os.makedirs(test_path, exist_ok=True)
+        with open(os.path.join(test_path, 'test4'), 'w') as f:
+            pass
     
     data[image_name] = {"image_name": image_name, "response": response}
     
