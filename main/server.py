@@ -10,7 +10,8 @@ from requests.exceptions import ConnectionError
 import shutil
 import json
 from flask import Flask, request
-from task import get_url_n_img
+# from task import get_url_n_img
+import asyncio
 
 from flask_cors import CORS
 
@@ -40,7 +41,7 @@ def wait_for_file(file_path, timeout=60):
 # todo
 # 함수 너무 길어지는 거 나눠야할듯
 @app.route("/url")
-def get_url_n_img():
+async def get_url_n_img():
 
     if os.path.exists("__pycache__/tools.cpython-311.pyc"):
         os.remove("__pycache__/tools.cpython-311.pyc")
