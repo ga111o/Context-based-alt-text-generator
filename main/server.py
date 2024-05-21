@@ -42,10 +42,6 @@ def wait_for_file(file_path, timeout=60):
 # 함수 너무 길어지는 거 나눠야할듯
 @app.route("/url")
 async def get_url_n_img():
-
-    if os.path.exists("__pycache__/tools.cpython-311.pyc"):
-        os.remove("__pycache__/tools.cpython-311.pyc")
-
     url = request.args.get("url", default="", type=str)
     session = request.args.get("session", default="", type=str)
 
