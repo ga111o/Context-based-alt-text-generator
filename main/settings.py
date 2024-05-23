@@ -7,6 +7,10 @@ from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageP
 from PIL import Image
 import torch
 
+# 1: llama8:3b
+# 2: gpt3.5-turbo
+choose_llm = 1
+
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
 def get_image_caption(image_path):
@@ -67,18 +71,21 @@ def detect_objects(image_path):
 
     return detections
 
-llm = ChatOpenAI(
+
+if choose_llm == 1:
+    llm = ChatOpenAI(
     temperature=0.1,
     streaming=True,
     callbacks=[StreamingStdOutCallbackHandler()],
-)
+    )
+elif choose_llm == 2:
+    llm = ChatOllama(
+    model = "llama3:8b",
+    temperature=0.1,
+    streaming=True,
+    callbacks=[StreamingStdOutCallbackHandler()]
+    )
 
-# llm = ChatOllama(
-#     model = "llama3:8b",
-#     temperature=0.1,
-#     streaming=True,
-#     callbacks=[StreamingStdOutCallbackHandler()]
-# )
 
 conversational_memory = ConversationBufferWindowMemory(
     memory_key="chat_history",
