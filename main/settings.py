@@ -1,18 +1,8 @@
-## settings like llm
-
-from click import prompt
-from iso639 import Language
-from joblib import Memory
 from langchain.agents import initialize_agent
 from langchain.chat_models import ChatOllama, ChatOpenAI
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from transformers import AutoTokenizer, AutoModelForCausalLM
-from langchain.prompts import PromptTemplate, ChatPromptTemplate
-
 from tools import ImageCaptionTool, ObjectDetectionTool
-
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
