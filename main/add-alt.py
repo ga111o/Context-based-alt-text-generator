@@ -1,6 +1,5 @@
 from tools import ImageCaptionTool, ObjectDetectionTool
-import settings
-
+from settings import agent
 from PIL import Image
 
 import os
@@ -66,7 +65,7 @@ for image_name in image_files:
                     language = image_info[image_name]["language"]
                     
                     user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
-                    response = settings.agent.run(f"{user_question}, image path: {image_path}")
+                    response = agent.run(f"{user_question}, image path: {image_path}")
                     
                     if DEBUG:
                         test_path = f'./source/{session}/responses/'
