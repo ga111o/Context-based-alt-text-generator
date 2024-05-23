@@ -2,16 +2,12 @@ from flask import Flask, request, Response, make_response
 import os
 import requests
 from bs4 import BeautifulSoup
-from mimetypes import guess_extension
 from urllib.parse import urljoin, urlparse
 import subprocess
 import time
 from requests.exceptions import ConnectionError
-import shutil
 import json
 from flask import Flask, request
-# from task import get_url_n_img
-import asyncio
 
 from flask_cors import CORS
 
@@ -29,14 +25,6 @@ def wait_for_file(file_path, timeout=60):
 		if time.time() - start_time > timeout:
 			return False
 	return True
-
-# from datetime import datetime
-
-# now = datetime.now()
-# session = now.strftime("%H%M%S%f")[:-3]
-# session = session + "test"
-# print(session)
-
 
 # todo
 # 함수 너무 길어지는 거 나눠야할듯
@@ -106,22 +94,6 @@ async def get_url_n_img():
         return f"url: {url}, download done & generate output.json"
     else:
         return "failed(timeout)"
-
-# from flask import Flask, request
-# from task import get_url_n_img
-
-# app = Flask(__name__)
-
-# @app.route("/url")
-# def handle_request():
-#     url = request.args.get("url", default="", type=str)
-#     session = request.args.get("session", default="", type=str)
-#     language = request.args.get("language", default="", type=str)
-
-#     # Celery를 통해 비동기 작업 요청
-#     get_url_n_img.delay(url, session, language)
-
-#     return "req done"
 
 # todo
 # 1. 함수 안에 있는 변수를 다른 함수로 넘겨주고 싶음. 함수를 call 하는 방법 말고.

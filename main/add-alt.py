@@ -9,9 +9,7 @@ import sys
 
 DEBUG = True
 
-
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
-
 
 if len(sys.argv) > 1:
     session = sys.argv[1]
