@@ -13,9 +13,11 @@ tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
 if len(sys.argv) > 1:
     session = sys.argv[1]
-    print("===========================================\nsession:", session)
+    if DEBUG:
+        print("===========================================\nsession:", session)
 else:
-    print("=================\nsession 전달 X \n==================")
+    if DEBUG:
+        print("=================\nsession 전달 X \n==================")
 
 
 with open(f'./source/{session}/responses/input.json', 'r', encoding='utf-8') as file:
@@ -33,10 +35,12 @@ if DEBUG:
 # 이 파트 함수든 뭐든으로 만들어서 깔끔하게 정리
 for image_name in image_files:
     original_image_path = os.path.join("source", session, "imgs", image_name)
-    print("---original img path:", original_image_path)
+    if DEBUG:
+        print("---original img path:", original_image_path)
 
     if not os.path.exists(original_image_path):
-        print(f"---can't find: {original_image_path}")
+        if DEBUG:
+            print(f"---can't find: {original_image_path}")
         continue
 
     if DEBUG:
@@ -50,9 +54,10 @@ for image_name in image_files:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
                 img.save(tmp.name)
                 image_path = tmp.name
-                print("---temp img path:", image_path)
                 
                 if DEBUG:
+                    print("---temp img path:", image_path)
+
                     test_path = f'./source/{session}/responses/'
                     os.makedirs(test_path, exist_ok=True)
                     with open(os.path.join(test_path, f'test2.1-{session}'), 'w') as f:
