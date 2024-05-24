@@ -9,7 +9,7 @@ import torch
 
 # 1: llama8:3b
 # 2: gpt3.5-turbo
-choose_llm = 1
+select_llm = 2
 
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
@@ -72,13 +72,13 @@ def detect_objects(image_path):
     return detections
 
 
-if choose_llm == 1:
+if select_llm == 1:
     llm = ChatOpenAI(
     temperature=0.1,
     streaming=True,
     callbacks=[StreamingStdOutCallbackHandler()],
     )
-elif choose_llm == 2:
+elif select_llm == 2:
     llm = ChatOllama(
     model = "llama3:8b",
     temperature=0.1,
