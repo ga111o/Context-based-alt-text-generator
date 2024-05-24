@@ -1,9 +1,14 @@
 #reference: https://github.com/computervisioneng/ask-question-image-web-app-streamlit-langchain/tree/main
 
+from asyncio import selector_events
 from langchain.tools import BaseTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
+
+# cpu: 1
+# cuda: 2
+select_device = 1
 
 
 class ImageCaptionTool(BaseTool):
@@ -15,7 +20,13 @@ class ImageCaptionTool(BaseTool):
         image = Image.open(img_path).convert('RGB')
 
         model_name = "Salesforce/blip-image-captioning-large"
-        device = "cpu"  # cuda
+        
+        # if select_device ? device
+
+        if select_device == 1:
+            device = "cpu"
+        elif select_device == 2:
+            device = "cuda"
 
         processor = BlipProcessor.from_pretrained(model_name)
         model = BlipForConditionalGeneration.from_pretrained(model_name).to(device)
