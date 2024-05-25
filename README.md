@@ -6,3 +6,5 @@ environment:
 
 - python 3.11 or higher
 - recommend `requirements.txt` pip install
+
+it use selenium, browser driver required
