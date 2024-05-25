@@ -6,10 +6,8 @@ from tools import ImageCaptionTool, ObjectDetectionTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
+import DEBUG
 
-# 1: llama8:3b
-# 2: gpt3.5-turbo
-select_llm = 2
 
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
@@ -72,13 +70,13 @@ def detect_objects(image_path):
     return detections
 
 
-if select_llm == 1:
+if DEBUG.SELECT_LLM == 1:
     llm = ChatOpenAI(
     temperature=0.1,
     streaming=True,
     callbacks=[StreamingStdOutCallbackHandler()],
     )
-elif select_llm == 2:
+elif DEBUG.SELECT_LLM == 2:
     llm = ChatOllama(
     model = "llama3:8b",
     temperature=0.1,
