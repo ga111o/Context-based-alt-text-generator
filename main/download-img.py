@@ -76,6 +76,12 @@ try:
                     if img.mode == 'RGBA':
                         img = img.convert('RGB')
                         img.save(image_file, 'JPEG')
+                    if img.width < 100 or img.height < 100:
+                        if DEBUG.PRINT_LOG_BOOLEN:
+                            print(f"===============small img({img.width}x{img.height}): {image_original_name} ")
+                        os.remove(image_file)
+                        continue
+                    
             except (UnidentifiedImageError, OSError) as e:
                 if DEBUG.PRINT_LOG_BOOLEN:
                     print(f"===============skipping invalid img: {image_original_name} error: {e}")
