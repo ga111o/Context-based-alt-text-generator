@@ -41,6 +41,12 @@ try:
     images = driver.find_elements(By.TAG_NAME, 'img')
 
     for i, image in enumerate(images):
+        alt_text = image.get_attribute('alt')
+        if alt_text:
+            if DEBUG.PRINT_LOG_BOOLEN:
+                print(f"===============skipping img with alt: {alt_text}")
+            continue
+
         src = image.get_attribute('src')
         
         if src:
