@@ -27,7 +27,7 @@ def wait_for_file(file_path, timeout=60):
 	return True
 
 # todo
-# 함수 너무 길어지는 거 나눠야할듯
+# func is tooo long, split required
 @app.route("/url")
 async def get_url_n_img():
     url = request.args.get("url", default="", type=str)
@@ -95,13 +95,9 @@ async def get_url_n_img():
     else:
         return "failed(timeout)"
 
-# todo
-# 1. 함수 안에 있는 변수를 다른 함수로 넘겨주고 싶음. 함수를 call 하는 방법 말고.
 @app.route(f"/<user_input>/output")
 def output_json(user_input):
     try:    
-        # response_folder = f"./source/{session}/responses" 이 함수에서 따로 선언을 해줘야 하나..
-
         with open(f"./source/{user_input}/responses/output.json", "r", encoding="utf-8") as file:
             data = file.read()
         return Response(data, mimetype="application/json")
