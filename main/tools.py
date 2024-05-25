@@ -5,11 +5,7 @@ from langchain.tools import BaseTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
-
-# cpu: 1
-# cuda: 2
-select_device = 1
-
+import DEBUG
 
 class ImageCaptionTool(BaseTool):
     name = "Image captioner"
@@ -21,11 +17,10 @@ class ImageCaptionTool(BaseTool):
 
         model_name = "Salesforce/blip-image-captioning-large"
         
-        # if select_device ? device
-
-        if select_device == 1:
+        # if select_device ? device = "cpu" : device = "cuda"
+        if DEBUG.SELECT_DEVICE == 1:
             device = "cpu"
-        elif select_device == 2:
+        elif DEBUG.SELECT_DEVICE == 2:
             device = "cuda"
 
         processor = BlipProcessor.from_pretrained(model_name)
