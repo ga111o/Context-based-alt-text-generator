@@ -245,3 +245,4 @@ flask_cors==4.0.1
 celery==5.4.0
 # flask[async]==3.0.3 
 # is this right expression?
+selenium==4.21.0
