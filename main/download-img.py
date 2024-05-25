@@ -7,6 +7,7 @@ import sys
 import json
 from urllib.parse import urlparse, unquote
 import base64
+from PIL import Image, UnidentifiedImageError
 import DEBUG
 
 if DEBUG.PRINT_LOG_BOOLEN:
@@ -52,6 +53,11 @@ try:
                 parsed_url = urlparse(src)
                 image_original_name = os.path.basename(unquote(parsed_url.path))
             
+            if image_original_name.endswith('.svg'):
+                if DEBUG.PRINT_LOG_BOOLEN:
+                    print(f"Skipping SVG image: {image_original_name}")
+                continue
+            
             MAX_FILENAME_LENGTH = 255
             if len(image_original_name) > MAX_FILENAME_LENGTH:
                 if DEBUG.PRINT_LOG_BOOLEN:
@@ -63,6 +69,19 @@ try:
             with open(image_file, 'wb') as file:
                 file.write(image_content)
                 
+            try:
+                with Image.open(image_file) as img:
+                    img.verify()  ## i supper luv verify().... 와 정상적인 이미지만 어케 골라내지 했는데 했는데 이게 되네
+                with Image.open(image_file) as img:
+                    if img.mode == 'RGBA':
+                        img = img.convert('RGB')
+                        img.save(image_file, 'JPEG')
+            except (UnidentifiedImageError, OSError) as e:
+                if DEBUG.PRINT_LOG_BOOLEN:
+                    print(f"Skipping invalid image: {image_original_name}, error: {e}")
+                os.remove(image_file)
+                continue
+
             parent_element = image.find_element(By.XPATH, '..')
             context = parent_element.text
 
