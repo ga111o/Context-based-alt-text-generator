@@ -55,13 +55,13 @@ try:
             
             if image_original_name.endswith('.svg'):
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"Skipping SVG image: {image_original_name}")
+                    print(f"===============skipping SVG img: {image_original_name}")
                 continue
             
             MAX_FILENAME_LENGTH = 255
             if len(image_original_name) > MAX_FILENAME_LENGTH:
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"name is too long.... skipping {image_original_name}")
+                    print(f"=============== name is too long.... skipping {image_original_name}")
                 continue
                 
             image_file = os.path.join(img_folder, image_original_name)
@@ -78,7 +78,7 @@ try:
                         img.save(image_file, 'JPEG')
             except (UnidentifiedImageError, OSError) as e:
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"Skipping invalid image: {image_original_name}, error: {e}")
+                    print(f"===============skipping invalid img: {image_original_name} error: {e}")
                 os.remove(image_file)
                 continue
 
@@ -91,7 +91,7 @@ try:
                 "language": language
             }
             if DEBUG.PRINT_LOG_BOOLEN:
-                print(f"=============download {image_file} ================")
+                print(f"download {image_file}")
                 
     if DEBUG.PRINT_LOG_BOOLEN:
         print(f"===============session: {session} ==================")
