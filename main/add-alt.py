@@ -44,11 +44,14 @@ for image_name in image_files:
 
     try:
         with Image.open(original_image_path) as img:
+            if img.mode == "RGBA":
+                img = img.convert("RGB")
+
             with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
                 img.save(tmp.name)
                 image_path = tmp.name
                 
-                if DEBUG.PRINT_LOG_BOOLEN:
+                if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:
                     print("---temp img path:", image_path)
 
                     test_path = f'./source/{session}/responses/'
@@ -63,7 +66,7 @@ for image_name in image_files:
                     user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
                     response = agent.run(f"{user_question}, image path: {image_path}")
                     
-                    if DEBUG.PRINT_LOG_BOOLEN:
+                    if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:
                         test_path = f'./source/{session}/responses/'
                         os.makedirs(test_path, exist_ok=True)
                         with open(os.path.join(test_path, f'test2.2-{session}'), 'w') as f:
