@@ -13,12 +13,6 @@ tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
 if len(sys.argv) > 1:
     session = sys.argv[1]
-    if DEBUG:
-        print("===========================================\nsession:", session)
-else:
-    if DEBUG:
-        print("=================\nsession 전달 X \n==================")
-
 
 with open(f'./source/{session}/responses/input.json', 'r', encoding='utf-8') as file:
     image_info = json.load(file)
