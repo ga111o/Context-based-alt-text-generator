@@ -12,7 +12,6 @@ import DEBUG
 if DEBUG.PRINT_LOG_BOOLEN:
     print("========= in the download-img.py ==============")
 
-
 gecko_driver_path = "./gecko/geckodriver"
 
 options = webdriver.FirefoxOptions()
@@ -53,6 +52,12 @@ try:
                 parsed_url = urlparse(src)
                 image_original_name = os.path.basename(unquote(parsed_url.path))
             
+            MAX_FILENAME_LENGTH = 255
+            if len(image_original_name) > MAX_FILENAME_LENGTH:
+                if DEBUG.PRINT_LOG_BOOLEN:
+                    print(f"name is too long.... skipping {image_original_name}")
+                continue
+                
             image_file = os.path.join(img_folder, image_original_name)
             
             with open(image_file, 'wb') as file:
