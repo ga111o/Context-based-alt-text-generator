@@ -8,11 +8,13 @@ import time
 from requests.exceptions import ConnectionError
 import json
 from flask import Flask, request
-
 from flask_cors import CORS
+import DEBUG
 
 app = Flask(__name__)
 CORS(app)
+
+DEBUG_DOWNLOADIMG = False
 
 @app.route("/")
 def working():
@@ -38,7 +40,6 @@ async def get_url_n_img():
 
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
-
     if not os.path.exists(response_folder):
         os.makedirs(response_folder)
 
@@ -51,41 +52,45 @@ async def get_url_n_img():
     except ConnectionError:
         print("========== ERROR: connection error 2")
 
-    soup = BeautifulSoup(response.content, "html.parser")
-    img_tags = soup.find_all("img")
+    if DEBUG_DOWNLOADIMG:
+        soup = BeautifulSoup(response.content, "html.parser")
+        img_tags = soup.find_all("img")
 
-    downloaded_files = set()  
+        downloaded_files = set()  
 
-    for i, img in enumerate(img_tags):
-        if not img.has_attr("alt"):
-            img_url = img.get("src")
-            if img_url:
-                full_img_url = urljoin(url, img_url)
-                img_name = os.path.basename(urlparse(full_img_url).path) 
+        for i, img in enumerate(img_tags):
+            if not img.has_attr("alt"):
+                img_url = img.get("src")
+                if img_url:
+                    full_img_url = urljoin(url, img_url)
+                    img_name = os.path.basename(urlparse(full_img_url).path) 
 
-                downloaded_files.add(img_name)
+                    downloaded_files.add(img_name)
 
-                try:
-                    img_response = requests.get(full_img_url, stream=True)
-                    if img_response.status_code == 200:
-                        img_path = os.path.join(img_folder, img_name)
-                        with open(img_path, "wb") as img_file:
-                            for chunk in img_response.iter_content(chunk_size=8192):
-                                img_file.write(chunk)
-                        print(f"download: {img_path}")
+                    try:
+                        img_response = requests.get(full_img_url, stream=True)
+                        if img_response.status_code == 200:
+                            img_path = os.path.join(img_folder, img_name)
+                            with open(img_path, "wb") as img_file:
+                                for chunk in img_response.iter_content(chunk_size=8192):
+                                    img_file.write(chunk)
+                            print(f"download: {img_path}")
 
-                        context = img.parent.get_text(strip=True)
-                        response_data[img_name] = {
-                            "image_path": img_path,
-                            "context": context,
-                            "language": request.args.get("language", default="", type=str)
-                        }
-                except ConnectionError:
-                    print(f"failed download image: {img_url}")
-
-    with open(f"./{response_folder}/input.json", "w", encoding="utf-8") as json_file:
-        json.dump(response_data, json_file, indent=4, ensure_ascii=False)
-
+                            context = img.parent.get_text(strip=True)
+                            response_data[img_name] = {
+                                "image_path": img_path,
+                                "context": context,
+                                "language": request.args.get("language", default="", type=str)
+                            }
+                    except ConnectionError:
+                        print(f"failed download image: {img_url}")
+        
+        with open(f"./{response_folder}/input.json", "w", encoding="utf-8") as json_file:
+            json.dump(response_data, json_file, indent=4, ensure_ascii=False)
+                        
+    language = request.args.get("language", default="", type=str)
+    
+    subprocess.call(["python", "download-img.py", session, url, language])
     subprocess.call(["python", "add-alt.py", session])
 
     if wait_for_file(f"./{response_folder}/output.json"):
