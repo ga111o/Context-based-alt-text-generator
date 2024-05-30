@@ -1,5 +1,3 @@
-#reference: https://github.com/computervisioneng/ask-question-image-web-app-streamlit-langchain/tree/main
-
 from asyncio import selector_events
 from langchain.tools import BaseTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
