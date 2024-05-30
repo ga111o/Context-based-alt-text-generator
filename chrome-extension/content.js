@@ -1,7 +1,6 @@
 let debugMode = false;
 const currentUrl = window.location.href;
 
-// 확장 프로그램에 로긴같은 거 하도록 해서 진짜 session 사용하도록 하면 좋을듯
 let session = new Date().getTime();
 
 let server = "http://127.0.0.1:9990";
@@ -12,7 +11,7 @@ chrome.storage.sync.get(["language", "debugMode"], function (data) {
 
   const targetUrl = `${server}/url?url=${encodeURIComponent(
     currentUrl
-  )}&language=${language}&session=${session}`;
+  )}&language=${language}&session=${session}&title=${document.title}`;
 
   fetch(targetUrl)
     .then((response) => {
