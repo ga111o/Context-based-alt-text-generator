@@ -1,8 +1,3 @@
-keyword
-
-- 전맹 시각장애
-- screen reader
-
 - 현재 alt 문제점
   ![alt text](src/image.png)
 
