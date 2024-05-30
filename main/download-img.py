@@ -21,10 +21,11 @@ options.add_argument('--headless')
 service = Service(executable_path=gecko_driver_path)
 driver = webdriver.Firefox(service=service, options=options)
 
-if len(sys.argv) > 3:
+if len(sys.argv) > 4:
     session = sys.argv[1]
     url = sys.argv[2]
     language = sys.argv[3]
+    title = sys.argv[4]
 
 img_folder = f"./source/{session}/imgs"
 response_folder = f"./source/{session}/responses"
@@ -100,7 +101,8 @@ try:
             response_data[image_original_name] = {
                 "image_path": image_file,
                 "context": context,
-                "language": language
+                "language": language,
+                "title": title
             }
             if DEBUG.PRINT_LOG_BOOLEN:
                 print(f"download {image_file}")

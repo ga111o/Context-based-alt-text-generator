@@ -62,8 +62,10 @@ for image_name in image_files:
                 try:
                     context = image_info[image_name]["context"]
                     language = image_info[image_name]["language"]
+                    title = image_info[image_name]["title"]
                     
-                    user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
+                    # user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
+                    user_question = f"image's article title is {title}. Describe the visual elements of the image based on article title"
                     response = agent.run(f"{user_question}, image path: {image_path}")
                     
                     if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:

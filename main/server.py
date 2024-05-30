@@ -9,6 +9,7 @@ from requests.exceptions import ConnectionError
 import json
 from flask import Flask, request
 from flask_cors import CORS
+from sqlalchemy import null
 import DEBUG
 
 app = Flask(__name__)
@@ -75,12 +76,13 @@ async def get_url_n_img():
                                 for chunk in img_response.iter_content(chunk_size=8192):
                                     img_file.write(chunk)
                             print(f"download: {img_path}")
-
+                            
                             context = img.parent.get_text(strip=True)
                             response_data[img_name] = {
                                 "image_path": img_path,
                                 "context": context,
-                                "language": request.args.get("language", default="", type=str)
+                                "language": request.args.get("language", default="", type=str),
+                                "title": request.args.get("title", default="", type=str)
                             }
                     except ConnectionError:
                         print(f"failed download image: {img_url}")
@@ -89,8 +91,9 @@ async def get_url_n_img():
             json.dump(response_data, json_file, indent=4, ensure_ascii=False)
                         
     language = request.args.get("language", default="", type=str)
+    title = request.args.get("title", default="", type=str)
     
-    subprocess.call(["python", "download-img.py", session, url, language])
+    subprocess.call(["python", "download-img.py", session, url, language, title])
     subprocess.call(["python", "add-alt.py", session])
 
     if wait_for_file(f"./{response_folder}/output.json"):
