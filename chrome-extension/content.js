@@ -3,11 +3,13 @@ const currentUrl = window.location.href;
 
 let session = new Date().getTime();
 
-let server = "http://127.0.0.1:9990";
-
-chrome.storage.sync.get(["language", "debugMode"], function (data) {
+// let server = "http://127.0.0.1:9990";
+// let server = "http://10.5.12.10:9990";
+let server = "";
+chrome.storage.sync.get(["language", "debugMode", "server"], function (data) {
   let language = data.language || "English";
   debugMode = !!data.debugMode;
+  server = data.server || "http://127.0.0.1:9990";
 
   const targetUrl = `${server}/url?url=${encodeURIComponent(
     currentUrl
