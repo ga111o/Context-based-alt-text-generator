@@ -1,1 +1,122 @@
-[{"image_id": 236730, "image_name": "000000236730.jpg", "image_path": "../images/val2017/000000236730.jpg", "caption": ["A zebra staring blankly near a watering hole.", "A zebra standing on a dry dirt lot.", "The head and shoulders of a zebra in silhouette. ", "A large lone zebra poses for a picture inside a zoo", "a close up of a giraffe in an outdoor area"]}, {"image_id": 258793, "image_name": "000000258793.jpg", "image_path": "../images/val2017/000000258793.jpg", "caption": ["A parking meter sitting next to a street with a very odd looking building next to it.", "The very pretty sun shining through some big buildings.", "The sun is hitting the corner of one of the buildings.", "I love the way the sun is creeping behind those two buidings", "a number of buildings in the distance "]}, {"image_id": 548555, "image_name": "000000548555.jpg", "image_path": "../images/val2017/000000548555.jpg", "caption": ["There is a chili dog in the bun.", "there is a long hot dog that has toppings on it", "A plate with a hot dog covered in chili on it.", "A chili dog on a homemade bun is worth the wait.", "A person holding a chili hot dog on a napkin."]}, {"image_id": 31817, "image_name": "000000031817.jpg", "image_path": "../images/val2017/000000031817.jpg", "caption": ["A man riding a motorcycle while eating food.", "Man wearing a helmet sitting on a motor scooter in traffic.", "A man leans forward on his motor bike as he sits in traffic.", "A person on a motor scooter with a helmet on.", "A man on a motor scooter waiting in a group of motor scooters."]}, {"image_id": 210394, "image_name": "000000210394.jpg", "image_path": "../images/val2017/000000210394.jpg", "caption": ["A city passenger bus stopping to take on passengers.", "an old bus on the road and people boarding it", "A large bus and some people on a city street.", "A truck driving down the middle of a street next to a crowd of people.", "A bunch of people who are standing outside a bus."]}, {"image_id": 137106, "image_name": "000000137106.jpg", "image_path": "../images/val2017/000000137106.jpg", "caption": ["it looks like a hand of a small child with pink and white top", "a hand of a person wearing a pink and white shirt ", "A child's hand holding onto a white counter top.", "a baby's hand is holding on to the bed sheets", "a person holds their hand on a bed"]}, {"image_id": 424642, "image_name": "000000424642.jpg", "image_path": "../images/val2017/000000424642.jpg", "caption": ["a couple of people are outside near some trees", "two men in the middle of the woods playing frisbee golf.", "Two guys play flying disc golf in the woods.", "Two guys plays an outdoor game with each other.", "Young men playing disc golf in treed area of park."]}, {"image_id": 505789, "image_name": "000000505789.jpg", "image_path": "../images/val2017/000000505789.jpg", "caption": ["Two children standing near wrought iron fence near brick building.", "Children scale and stand on a fence overlooking an arched entrance. ", "Two kids in pink and purple jackets standing by a fence.", "Children look over the wrought iron fence into the brick archways.", "A pair of children stand on a fence together."]}, {"image_id": 517069, "image_name": "000000517069.jpg", "image_path": "../images/val2017/000000517069.jpg", "caption": ["Two women waiting at a bench next to a street.", "A woman sitting on a bench and a woman standing waiting for the bus.", "A woman sitting on a bench in the middle of the city", "A woman sitting on a bench and a woman standing behind the bench at a bus stop", "A woman and another woman waiting at a stop."]}, {"image_id": 519569, "image_name": "000000519569.jpg", "image_path": "../images/val2017/000000519569.jpg", "caption": ["a kitchen with a refrigerator a counter with chairs", "Bar stools at a bar separating a dining area from a kitchen.", "The small kitchen has large cabinets and two stoves.", "A kitchen is shown with chairs and an oven.", "A very nice large modern style kitchen with a bar."]}]
+[
+  {
+    "image_id": 355240,
+    "image_name": "000000355240.jpg",
+    "image_path": "../images/val2017/000000355240.jpg",
+    "caption": [
+      "a dog sits on a chair behind a glass ",
+      "Small dog sitting on display behind the window. ",
+      "A chihuahua sits in a window display with a price tag.",
+      "A store's display window with two adorable Chihuahua dog statues.",
+      "a dog is siting behind a large window"
+    ]
+  },
+  {
+    "image_id": 13348,
+    "image_name": "000000013348.jpg",
+    "image_path": "../images/val2017/000000013348.jpg",
+    "caption": [
+      "a large air plane on a terminal ",
+      "The humongous twin engine airliner is being loaded. ",
+      "A JAL jetliner on the tarmac at an airport.",
+      "A large plane is parked at the airport.",
+      "A Japan Airlines plane sits parked at an airport."
+    ]
+  },
+  {
+    "image_id": 91495,
+    "image_name": "000000091495.jpg",
+    "image_path": "../images/val2017/000000091495.jpg",
+    "caption": [
+      "Baseballs players sliding to base and jumping during the game.",
+      "Baseball players, one on the ground, one in the air.",
+      "Baseball scene with player sliding in and a catcher jumping up in mid air.",
+      "Baseball players slide, and jump near a base.",
+      "Two baseball players one catching the ball the other sliding into base"
+    ]
+  },
+  {
+    "image_id": 161044,
+    "image_name": "000000161044.jpg",
+    "image_path": "../images/val2017/000000161044.jpg",
+    "caption": [
+      "A couple of airplanes flying under a cloudy sky.",
+      "The two airplanes are in the air next to eachother",
+      "Pair of small planes flying near each other on stormy day.",
+      "Two airplanes are flying in the cloudy sky.",
+      "Two planes that are flying in the sky."
+    ]
+  },
+  {
+    "image_id": 111036,
+    "image_name": "000000111036.jpg",
+    "image_path": "../images/val2017/000000111036.jpg",
+    "caption": [
+      "A stove top oven sitting on a pile of junk outdoors.",
+      "An old oven left outside in the garbage.",
+      "An oven is sitting outside in a dumpster.",
+      "A kitchen stove laying in a dumpster. ",
+      "A old stove in a dumpster in a parking lot. "
+    ]
+  },
+  {
+    "image_id": 567898,
+    "image_name": "000000567898.jpg",
+    "image_path": "../images/val2017/000000567898.jpg",
+    "caption": [
+      "Three round plates filled with artistically presented food.",
+      "Three pans filled with different types of food.",
+      "a couple of tins with some food in them",
+      "Three tins of brownies with frosting decorations on them",
+      "A plate of food sits next to its dessert"
+    ]
+  },
+  {
+    "image_id": 40471,
+    "image_name": "000000040471.jpg",
+    "image_path": "../images/val2017/000000040471.jpg",
+    "caption": [
+      "An older picture of a large kitchen with white appliances.",
+      "An all white painted kitchen with a ceiling fan.",
+      "A painted white kitchen with a refrigerator and an automatic dish washer next to an oven stove.",
+      "Small white kitchen with a ceiling fan hanging down.",
+      "a white kitchen with a ceiling fan a stove and refrigerator"
+    ]
+  },
+  {
+    "image_id": 206411,
+    "image_name": "000000206411.jpg",
+    "image_path": "../images/val2017/000000206411.jpg",
+    "caption": [
+      "A hand spraying water into a white toilet bowl.",
+      "A person spraying water into a toilet bowl in a tiled room.",
+      "A hand holding a spraying hose to a toilet bowl in a small toilet stall.",
+      "A person sprays the inside of a toilet.",
+      "The man is spraying down the toilet to clean it."
+    ]
+  },
+  {
+    "image_id": 27982,
+    "image_name": "000000027982.jpg",
+    "image_path": "../images/val2017/000000027982.jpg",
+    "caption": [
+      "A small bathroom with marble tiles and counter.",
+      "a toilet with the toilet seat left up and the sink next to it",
+      "The black and white photo shows a toilet and a bathroom sink.",
+      "a toilet a sink a counter a mirror and some toilet paper",
+      "Modern bathroom with stone sink area and tiled walls."
+    ]
+  },
+  {
+    "image_id": 476119,
+    "image_name": "000000476119.jpg",
+    "image_path": "../images/val2017/000000476119.jpg",
+    "caption": [
+      "a man skating on the road very fast",
+      "A person wearing a motorcycle helmet is riding a skateboard.",
+      "A man riding a skateboard down a street in front of a red car.",
+      "A man with a helmet on riding a skateboard in the street. ",
+      "A skateboarder rides down the street with a helmet"
+    ]
+  }
+]
