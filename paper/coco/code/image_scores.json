@@ -1,172 +1,51 @@
-[
-  {
-    "image_id": 355240,
-    "caption_model": "a dog sitting in a window",
-    "llm_model": "a dog sitting in a window",
-    "caption_model_scores": {
-      "score-cap1": 0.07139092683792114,
-      "score-cap2": 0.14045394957065582,
-      "score-cap3": 0.160264253616333,
-      "score-cap4": 0.22622783482074738
+{
+  "caption_model_wins": 1,
+  "llm_model_wins": 2,
+  "results": [
+    {
+      "image_id": 167898,
+      "caption_model": "a bathroom with a toilet, sink, and shower",
+      "llm_model": "a bathroom with a toilet, sink and shower",
+      "caption_model_scores": [
+        0.09417597204446793, 0.1011517196893692, 0.1411786675453186,
+        0.1505567729473114
+      ],
+      "llm_model_scores": [
+        0.08763563632965088, 0.10681867599487305, 0.1356244534254074,
+        0.15211033821105957
+      ],
+      "avg_caption_score": 0.12176578305661678,
+      "avg_llm_score": 0.12054727599024773
     },
-    "llm_model_score": {
-      "score-cap1": 0.07139092683792114,
-      "score-cap2": 0.14045394957065582,
-      "score-cap3": 0.160264253616333,
-      "score-cap4": 0.22622783482074738
-    }
-  },
-  {
-    "image_id": 13348,
-    "caption_model": "a white plane",
-    "llm_model": "a plane parked at an airport",
-    "caption_model_scores": {
-      "score-cap1": 0.2339496910572052,
-      "score-cap2": 0.27142849564552307,
-      "score-cap3": 0.2902970016002655,
-      "score-cap4": 0.3259350657463074
+    {
+      "image_id": 6771,
+      "caption_model": "a woman in a costume",
+      "llm_model": "a woman in a costume talking to a man",
+      "caption_model_scores": [
+        0.15456971526145935, 0.17080605030059814, 0.17246344685554504,
+        0.196451336145401
+      ],
+      "llm_model_scores": [
+        0.15518899261951447, 0.15574032068252563, 0.1668212115764618,
+        0.22824792563915253
+      ],
+      "avg_caption_score": 0.17357263714075089,
+      "avg_llm_score": 0.1764996126294136
     },
-    "llm_model_score": {
-      "score-cap1": 0.09374315291643143,
-      "score-cap2": 0.15508124232292175,
-      "score-cap3": 0.16354739665985107,
-      "score-cap4": 0.19079309701919556
+    {
+      "image_id": 155443,
+      "caption_model": "a train station with a train and a train",
+      "llm_model": "a train is pulling into the station",
+      "caption_model_scores": [
+        0.19275110960006714, 0.20372435450553894, 0.20374545454978943,
+        0.25042739510536194
+      ],
+      "llm_model_scores": [
+        0.0765783041715622, 0.17221426963806152, 0.18351751565933228,
+        0.21241486072540283
+      ],
+      "avg_caption_score": 0.21266207844018936,
+      "avg_llm_score": 0.1611812375485897
     }
-  },
-  {
-    "image_id": 91495,
-    "caption_model": "a baseball player is trying to catch the ball",
-    "llm_model": "a baseball player sliding into home plate",
-    "caption_model_scores": {
-      "score-cap1": 0.19978155195713043,
-      "score-cap2": 0.21530337631702423,
-      "score-cap3": 0.24186834692955017,
-      "score-cap4": 0.2518305480480194
-    },
-    "llm_model_score": {
-      "score-cap1": 0.1537153422832489,
-      "score-cap2": 0.16361364722251892,
-      "score-cap3": 0.16574737429618835,
-      "score-cap4": 0.16852551698684692
-    }
-  },
-  {
-    "image_id": 161044,
-    "caption_model": "the sky is cloudy",
-    "llm_model": "a group of birds flying in the sky",
-    "caption_model_scores": {
-      "score-cap1": 0.22915250062942505,
-      "score-cap2": 0.2320190966129303,
-      "score-cap3": 0.30799734592437744,
-      "score-cap4": 0.3153114318847656
-    },
-    "llm_model_score": {
-      "score-cap1": 0.2559066414833069,
-      "score-cap2": 0.2633286118507385,
-      "score-cap3": 0.2709643244743347,
-      "score-cap4": 0.31460967659950256
-    }
-  },
-  {
-    "image_id": 111036,
-    "caption_model": "a stove sitting on top of a wooden box",
-    "llm_model": "a stove sitting on top of a wooden table",
-    "caption_model_scores": {
-      "score-cap1": 0.20145288109779358,
-      "score-cap2": 0.23499718308448792,
-      "score-cap3": 0.2698632776737213,
-      "score-cap4": 0.297956645488739
-    },
-    "llm_model_score": {
-      "score-cap1": 0.20249289274215698,
-      "score-cap2": 0.2319803535938263,
-      "score-cap3": 0.27230381965637207,
-      "score-cap4": 0.3205912709236145
-    }
-  },
-  {
-    "image_id": 567898,
-    "caption_model": "a green table cloth",
-    "llm_model": "three bowls of food on a green table",
-    "caption_model_scores": {
-      "score-cap1": 0.35364246368408203,
-      "score-cap2": 0.3625272810459137,
-      "score-cap3": 0.39949101209640503,
-      "score-cap4": 0.40139758586883545
-    },
-    "llm_model_score": {
-      "score-cap1": 0.2195870578289032,
-      "score-cap2": 0.23712432384490967,
-      "score-cap3": 0.2553428113460541,
-      "score-cap4": 0.3015908896923065
-    }
-  },
-  {
-    "image_id": 40471,
-    "caption_model": "a kitchen with a ceiling fan and a sink",
-    "llm_model": "a kitchen with a ceiling fan and a sink",
-    "caption_model_scores": {
-      "score-cap1": 0.1153097003698349,
-      "score-cap2": 0.13533733785152435,
-      "score-cap3": 0.15252727270126343,
-      "score-cap4": 0.24935282766819
-    },
-    "llm_model_score": {
-      "score-cap1": 0.1153097003698349,
-      "score-cap2": 0.13533733785152435,
-      "score-cap3": 0.15252727270126343,
-      "score-cap4": 0.24935282766819
-    }
-  },
-  {
-    "image_id": 206411,
-    "caption_model": "a person is cleaning a toilet with a brush",
-    "llm_model": "a person is cleaning a toilet with a brush",
-    "caption_model_scores": {
-      "score-cap1": 0.17530480027198792,
-      "score-cap2": 0.19909414649009705,
-      "score-cap3": 0.20026874542236328,
-      "score-cap4": 0.2067432999610901
-    },
-    "llm_model_score": {
-      "score-cap1": 0.17530480027198792,
-      "score-cap2": 0.19909414649009705,
-      "score-cap3": 0.20026874542236328,
-      "score-cap4": 0.2067432999610901
-    }
-  },
-  {
-    "image_id": 27982,
-    "caption_model": "a bathroom with a sink and a mirror",
-    "llm_model": "a bathroom with a sink and a mirror",
-    "caption_model_scores": {
-      "score-cap1": 0.15684092044830322,
-      "score-cap2": 0.19153138995170593,
-      "score-cap3": 0.1980685293674469,
-      "score-cap4": 0.20433807373046875
-    },
-    "llm_model_score": {
-      "score-cap1": 0.15684092044830322,
-      "score-cap2": 0.19153138995170593,
-      "score-cap3": 0.1980685293674469,
-      "score-cap4": 0.20433807373046875
-    }
-  },
-  {
-    "image_id": 476119,
-    "caption_model": "a man riding a skateboard down a street",
-    "llm_model": "a man riding a skateboard down a street",
-    "caption_model_scores": {
-      "score-cap1": 0.10600566864013672,
-      "score-cap2": 0.12873435020446777,
-      "score-cap3": 0.1500481218099594,
-      "score-cap4": 0.17475901544094086
-    },
-    "llm_model_score": {
-      "score-cap1": 0.10600566864013672,
-      "score-cap2": 0.12873435020446777,
-      "score-cap3": 0.1500481218099594,
-      "score-cap4": 0.17475901544094086
-    }
-  }
-]
+  ]
+}
