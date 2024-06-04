@@ -1,51 +1,81 @@
 {
-  "caption_model_wins": 1,
-  "llm_model_wins": 2,
+  "caption_model_wins": 0,
+  "llm_model_wins": 4,
   "results": [
     {
-      "image_id": 167898,
-      "caption_model": "a bathroom with a toilet, sink, and shower",
-      "llm_model": "a bathroom with a toilet, sink and shower",
+      "image_id": 251537,
+      "caption_model": "a carrot and a carrot on a cutting board",
+      "llm_model": "a carrot and a carrot on a cutting board",
       "caption_model_scores": [
-        0.09417597204446793, 0.1011517196893692, 0.1411786675453186,
-        0.1505567729473114
+        0.09791312366724014, 0.15532609820365906, 0.16950900852680206,
+        0.20999997854232788
       ],
       "llm_model_scores": [
-        0.08763563632965088, 0.10681867599487305, 0.1356244534254074,
-        0.15211033821105957
+        0.09791312366724014, 0.15532609820365906, 0.16950900852680206,
+        0.20999997854232788
       ],
-      "avg_caption_score": 0.12176578305661678,
-      "avg_llm_score": 0.12054727599024773
+      "avg_caption_score": 0.15818705223500729,
+      "avg_llm_score": 0.15818705223500729
     },
     {
-      "image_id": 6771,
-      "caption_model": "a woman in a costume",
-      "llm_model": "a woman in a costume talking to a man",
+      "image_id": 395180,
+      "caption_model": "a man on a bike",
+      "llm_model": "a man on a bike is standing by the water",
       "caption_model_scores": [
-        0.15456971526145935, 0.17080605030059814, 0.17246344685554504,
-        0.196451336145401
+        0.1772795021533966, 0.26850706338882446, 0.28591471910476685,
+        0.29686111211776733
       ],
       "llm_model_scores": [
-        0.15518899261951447, 0.15574032068252563, 0.1668212115764618,
-        0.22824792563915253
+        0.08426350355148315, 0.2069360613822937, 0.21045681834220886,
+        0.2396601140499115
       ],
-      "avg_caption_score": 0.17357263714075089,
-      "avg_llm_score": 0.1764996126294136
+      "avg_caption_score": 0.2571405991911888,
+      "avg_llm_score": 0.1853291243314743
     },
     {
-      "image_id": 155443,
-      "caption_model": "a train station with a train and a train",
-      "llm_model": "a train is pulling into the station",
+      "image_id": 521231,
+      "caption_model": "a large white bear",
+      "llm_model": "a polar bear walking on a rock in the grass",
       "caption_model_scores": [
-        0.19275110960006714, 0.20372435450553894, 0.20374545454978943,
-        0.25042739510536194
+        0.16483980417251587, 0.18637213110923767, 0.2427823841571808,
+        0.25075197219848633
       ],
       "llm_model_scores": [
-        0.0765783041715622, 0.17221426963806152, 0.18351751565933228,
-        0.21241486072540283
+        0.08918086439371109, 0.11530375480651855, 0.1375288963317871,
+        0.1413569152355194
       ],
-      "avg_caption_score": 0.21266207844018936,
-      "avg_llm_score": 0.1611812375485897
+      "avg_caption_score": 0.21118657290935516,
+      "avg_llm_score": 0.12084260769188404
+    },
+    {
+      "image_id": 331352,
+      "caption_model": "a toilet with a tank and a tankless toilet",
+      "llm_model": "a toilet with a seat and a seat",
+      "caption_model_scores": [
+        0.26000502705574036, 0.2733727991580963, 0.2763669490814209,
+        0.2769600450992584
+      ],
+      "llm_model_scores": [
+        0.2475125640630722, 0.24807733297348022, 0.2549365758895874,
+        0.263905793428421
+      ],
+      "avg_caption_score": 0.271676205098629,
+      "avg_llm_score": 0.2536080665886402
+    },
+    {
+      "image_id": 129135,
+      "caption_model": "a train sitting on the tracks",
+      "llm_model": "a yellow and blue train at a train station",
+      "caption_model_scores": [
+        0.11893338710069656, 0.21982336044311523, 0.23018145561218262,
+        0.23754405975341797
+      ],
+      "llm_model_scores": [
+        0.09437129646539688, 0.0962584838271141, 0.19451764225959778,
+        0.20115822553634644
+      ],
+      "avg_caption_score": 0.2016205657273531,
+      "avg_llm_score": 0.1465764120221138
     }
   ]
 }
