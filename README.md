@@ -1,7 +1,4 @@
-> [demonstration add alt to testing web youtube link (run on laptop cpu)](https://youtu.be/nt751zZWb7E)
-> [demonstration add alt to namu wiki (run on laptop cpu)](https://youtu.be/4jklbwc1q7E)
->
-> [reference: ask-question-image-web-app-streamlit-langchain](https://github.com/computervisioneng/ask-question-image-web-app-streamlit-langchain)
+[![add alt emonstration video](https://youtu.be/o8ILQL7NjW0/0.jpg)](https://youtu.be/o8ILQL7NjW0)
 
 environment:
 
