@@ -10,3 +10,4 @@ main/source
 main/gecko
 paper/coco/annotations
 paper/coco/images
+paper/coco/code/__pycache__
