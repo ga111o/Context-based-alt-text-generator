@@ -45,12 +45,16 @@ with open('image_captions.json', 'w') as f:
 
 ##################################################
 
+
 with open('image_captions.json', 'r') as f:
     data = json.load(f)
 
 embeddings = OpenAIEmbeddings()
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
 results = []
+caption_wins = 0
+llm_wins = 0
+
 for image_data in data:
     texts = []
     image_captions = image_data['caption']
@@ -66,7 +70,8 @@ for image_data in data:
     if len(score_caption_model) < len(image_captions):
         print(f"Warning: score_caption_model length ({len(score_caption_model)}) is less than the number of captions ({len(image_captions)})")
 
-    caption_scores = {f"score-cap{i+1}": float(score_caption_model[i][1]) for i in range(min(len(image_captions), len(score_caption_model)))}
+    caption_scores = [float(score[1]) for score in score_caption_model[:len(image_captions)]]
+    avg_caption_score = sum(caption_scores) / len(caption_scores) if caption_scores else 0
 
     original_image_path = img_path
 
@@ -90,18 +95,34 @@ for image_data in data:
         continue
 
     score_llm_model = out.similarity_search_with_score(response)
-    llm_scores = {f"score-cap{i+1}": float(score_llm_model[i][1]) for i in range(min(len(image_captions), len(score_llm_model)))}
+    llm_scores = [float(score[1]) for score in score_llm_model[:len(image_captions)]]
+    avg_llm_score = sum(llm_scores) / len(llm_scores) if llm_scores else 0
+
+    # 승리 횟수 비교
+    if avg_caption_score < avg_llm_score:
+        caption_wins += 1
+    elif avg_llm_score < avg_caption_score:
+        llm_wins += 1
 
     result = {
         "image_id": image_data['image_id'],
         "caption_model": caption,
         "llm_model": response,
         "caption_model_scores": caption_scores,
-        "llm_model_score": llm_scores
+        "llm_model_scores": llm_scores,
+        "avg_caption_score": avg_caption_score,
+        "avg_llm_score": avg_llm_score
     }
     results.append(result)
 
+# 최종 결과를 JSON 파일의 상단에 추가
+final_results = {
+    "caption_model_wins": caption_wins,
+    "llm_model_wins": llm_wins,
+    "results": results
+}
+
 with open('image_scores.json', 'w') as f:
-    json.dump(results, f, indent=4)
+    json.dump(final_results, f, indent=4)
 
 print("\n\n\n====finished====\n")
