@@ -6,6 +6,6 @@ CREATE_FILE_FOR_CHECK_LINE_BOOLEN = False # true or false
 # auto detected: 3
 SELECT_DEVICE = 3
 
-# 1: llama8:3b
-# 2: gpt3.5-turbo
-SELECT_LLM = 1
+# 1: gpt3.5-turbo
+# 2: llama8:3b
+SELECT_LLM = 2
