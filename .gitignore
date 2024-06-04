@@ -8,3 +8,5 @@ main/imgs/
 .gpt-key
 main/source
 main/gecko
+paper/coco/annotations
+paper/coco/images
