@@ -15,7 +15,7 @@ class ImageCaptionTool(BaseTool):
     def _run(self, img_path):
         image = Image.open(img_path).convert('RGB')
 
-        model_name = "Salesforce/blip-image-captioning-large"
+        model_name = "Salesforce/blip-image-captioning-base"
         
         # if select_device ? device = "cpu" : device = "cuda"
         if DEBUG.SELECT_DEVICE == 1:

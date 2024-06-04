@@ -8,4 +8,4 @@ SELECT_DEVICE = 3
 
 # 1: gpt3.5-turbo
 # 2: llama8:3b
-SELECT_LLM = 2
+SELECT_LLM = 1

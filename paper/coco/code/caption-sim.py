@@ -13,10 +13,7 @@ from settings import agent
 import os
 import tempfile
 
-
-img_num = 2
-
-
+img_num = 3
 
 dataDir='..'
 dataType='val2017'
@@ -54,7 +51,6 @@ with open('image_captions.json', 'r') as f:
 embeddings = OpenAIEmbeddings()
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
 results = []
-
 for image_data in data:
     texts = []
     image_captions = image_data['caption']
@@ -67,9 +63,13 @@ for image_data in data:
     caption = caption_tool._run(img_path)
 
     score_caption_model = out.similarity_search_with_score(caption)
-    caption_scores = [{"caption": image_captions[i], "score": float(score_caption_model[i][1])} for i in range(len(image_captions)-1)]
+    if len(score_caption_model) < len(image_captions):
+        print(f"Warning: score_caption_model length ({len(score_caption_model)}) is less than the number of captions ({len(image_captions)})")
+
+    caption_scores = {f"score-cap{i+1}": float(score_caption_model[i][1]) for i in range(min(len(image_captions), len(score_caption_model)))}
 
     original_image_path = img_path
+
     try:
         with Image.open(original_image_path) as img:
             if img.mode == "RGBA":
@@ -80,7 +80,7 @@ for image_data in data:
                 image_path = tmp.name
 
                 try:
-                    user_question = f"Describe the visual elements of the image based caption. DO NOT SAY ANYTHING ELSE"
+                    user_question = f"Describe the visual elements of the image. DO NOT SAY ANYTHING ELSE"
                     response = agent.run(f"{user_question}, image path: {image_path}")
                     
                 except FileNotFoundError as e:
@@ -90,16 +90,14 @@ for image_data in data:
         continue
 
     score_llm_model = out.similarity_search_with_score(response)
-    llm_scores = [{"caption": image_captions[i], "score": float(score_llm_model[i][1])} for i in range(len(image_captions)-1)]
+    llm_scores = {f"score-cap{i+1}": float(score_llm_model[i][1]) for i in range(min(len(image_captions), len(score_llm_model)))}
 
     result = {
         "image_id": image_data['image_id'],
-        "image_name": image_data['image_name'],
-        "image_path": image_data['image_path'],
-        "caption_model_output": caption,
+        "caption_model": caption,
+        "llm_model": response,
         "caption_model_scores": caption_scores,
-        "llm_model_output": response,
-        "llm_model_scores": llm_scores
+        "llm_model_score": llm_scores
     }
     results.append(result)
 
