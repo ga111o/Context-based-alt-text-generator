@@ -1,0 +1,51 @@
+{
+  "1.jpg": {
+    "image_path": "./imgs/1.jpg",
+    "context": "From September, more than 1,000 people will be required to completely ban the use of disposable products and to reduce waste",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Various garbage is piled up, and there is a prohibition mark in the middle."
+  },
+  "2.jpg": {
+    "image_path": "./imgs/2.jpg",
+    "context": "서울 동행 버스 residents of the Seoul metropolitan area on their way home...6.10. (Monday) Expansion of all routes",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Two people are waiting for a bus that says  '서울 동행 버스' at the station."
+  },
+  "3.jpg": {
+    "image_path": "./imgs/3.jpg",
+    "context": "Seoul City Hall_Starting the 'Partner Together' activity to quickly help evacuate semi-underground households vulnerable to flooding",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Several people are organizing a house filled with water."
+  },
+  "4.jpg": {
+    "image_path": "./imgs/4.jpg",
+    "context": "The Seoul Metropolitan Government will clean up abandoned bicycles that are inconvenient because they are abandoned in apartments and shopping malls.",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Two people clean up the abandoned bicycle."
+  },
+  "5.jpg": {
+    "image_path": "./imgs/5.jpg",
+    "context": "If you're looking for a hospital that treats you at night and on holidays, try our child's safe medical institution",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "If you're looking for a hospital that treats you at night and on holidays, try our child's safe medical institution"
+  },
+  "6.jpg": {
+    "image_path": "./imgs/6.jpg",
+    "context": "Payment of local taxes and issuance of certificates at once...Seoul implements 'STAX electronic document wallet service'",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "A person holds a 'Seoul tax payment app' and there is money around."
+  },
+  "7.jpg": {
+    "image_path": "./imgs/7.jpg",
+    "context": "Subway Line 8 Extension (Byeolnae Line) Starts business start...It opens in August",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Pink Line 8 subway image"
+  }
+}
