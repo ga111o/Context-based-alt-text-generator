@@ -11,4 +11,5 @@ main/source
 main/gecko
 comapre/coco/annotations
 comapre/coco/images
+compare/coco/images
 comapre/coco/code/__pycache__
