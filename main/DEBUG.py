@@ -1,4 +1,4 @@
-PRINT_LOG_BOOLEN = True # true or false
+PRINT_LOG_BOOLEN = False # true or false
 CREATE_FILE_FOR_CHECK_LINE_BOOLEN = False # true or false
 
 # cpu: 1
@@ -6,6 +6,6 @@ CREATE_FILE_FOR_CHECK_LINE_BOOLEN = False # true or false
 # auto detected: 3
 SELECT_DEVICE = 3
 
-# 1: llama8:3b
-# 2: gpt3.5-turbo
-SELECT_LLM = 1
+# 1: gpt3.5-turbo
+# 2: llama8:3b
+SELECT_LLM = 2

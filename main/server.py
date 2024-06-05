@@ -75,7 +75,8 @@ async def get_url_n_img():
                             with open(img_path, "wb") as img_file:
                                 for chunk in img_response.iter_content(chunk_size=8192):
                                     img_file.write(chunk)
-                            print(f"download: {img_path}")
+                            if(DEBUG.PRINT_LOG_BOOLEN):
+                                print(f"download: {img_path}")
                             
                             context = img.parent.get_text(strip=True)
                             response_data[img_name] = {
@@ -85,7 +86,8 @@ async def get_url_n_img():
                                 "title": request.args.get("title", default="", type=str)
                             }
                     except ConnectionError:
-                        print(f"failed download image: {img_url}")
+                        if(DEBUG.PRINT_LOG_BOOLEN):
+                            print(f"failed download image: {img_url}")
         
         with open(f"./{response_folder}/input.json", "w", encoding="utf-8") as json_file:
             json.dump(response_data, json_file, indent=4, ensure_ascii=False)
@@ -97,9 +99,10 @@ async def get_url_n_img():
     subprocess.call(["python", "add-alt.py", session])
 
     if wait_for_file(f"./{response_folder}/output.json"):
-        print("확장 프로그램에게 '`output.json`이 생겼어요!'를 알려주는 방법이 뭐가 있을까..")
-        print("`output.json`이 업데이트 되었다는 것도 체크 가능한데, 업데이트 되었다는 걸 알려주는 방법을 모르겠네...")
-        return f"url: {url}, download done & generate output.json"
+        if(DEBUG.PRINT_LOG_BOOLEN):
+            print("확장 프로그램에게 '`output.json`이 생겼어요!'를 알려주는 방법이 뭐가 있을까..")
+            print("`output.json`이 업데이트 되었다는 것도 체크 가능한데, 업데이트 되었다는 걸 알려주는 방법을 모르겠네...")
+            return f"url: {url}, download done & generate output.json"
     else:
         return "failed(timeout)"
 
@@ -122,4 +125,5 @@ def intput_json(user_input):
         return make_response("session not exist", 450)
     
 if __name__ == "__main__":
-    app.run(debug=True, port=9990)
+    from waitress import serve
+    serve(app, port=9990)

@@ -72,16 +72,17 @@ def detect_objects(image_path):
 
 if DEBUG.SELECT_LLM == 1:
     llm = ChatOpenAI(
-    temperature=0.1,
-    streaming=True,
-    callbacks=[StreamingStdOutCallbackHandler()],
+        model="gpt-3.5-turbo",
+        temperature=0.1,
+        streaming=True,
+        callbacks=[StreamingStdOutCallbackHandler()],
     )
 elif DEBUG.SELECT_LLM == 2:
     llm = ChatOllama(
-    model = "llama3:8b",
-    temperature=0.1,
-    streaming=True,
-    callbacks=[StreamingStdOutCallbackHandler()]
+        model = "llama3:8b",    
+        temperature=0.1,
+        streaming=True,
+        callbacks=[StreamingStdOutCallbackHandler()]
     )
 
 
