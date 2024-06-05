@@ -1,55 +1,83 @@
 {
-  "caption_model_wins": 1,
-  "llm_model_wins": 6,
-  "results": [
-    {
-      "image_id": "1.jpg",
-      "caption_model": "a pile of stuff with a red sign that says no litter",
-      "llm_model": "The image appears to be a pile of junk and other waste items, likely related to the topic of reducing waste and banning disposable products.",
-      "caption_model_scores": [0.36841118335723877],
-      "llm_model_scores": [0.313215970993042]
-    },
-    {
-      "image_id": "2.jpg",
-      "caption_model": "a bus with people standing in front of it",
-      "llm_model": "People waiting for a bus are residents of the Seoul metropolitan area on their way home from work or school.",
-      "caption_model_scores": [0.39317822456359863],
-      "llm_model_scores": [0.2114640474319458]
-    },
-    {
-      "image_id": "3.jpg",
-      "caption_model": "a group of people are cleaning a room",
-      "llm_model": "The image shows people moving into a house, likely as part of the 'Partner Together' activity to help evacuate semi-underground households vulnerable to flooding in Seoul City Hall.",
-      "caption_model_scores": [0.45259708166122437],
-      "llm_model_scores": [0.10108643770217896]
-    },
-    {
-      "image_id": "4.jpg",
-      "caption_model": "two people walking with bicycles in the city",
-      "llm_model": "The image appears to be people walking and biking in the city, likely in Seoul, South Korea, given the context of abandoned bicycles being cleaned up.",
-      "caption_model_scores": [0.34107524156570435],
-      "llm_model_scores": [0.21608728170394897]
-    },
-    {
-      "image_id": "5.jpg",
-      "caption_model": "a woman sitting on a chair with a man standing next to her and a woman standing next to her",
-      "llm_model": "The image appears to be a woman sitting in a chair with a man standing next to her.",
-      "caption_model_scores": [0.5742579102516174],
-      "llm_model_scores": [0.5765175223350525]
-    },
-    {
-      "image_id": "6.jpg",
-      "caption_model": "a woman holding a phone and looking at a screen with a shopping cart",
-      "llm_model": "The image appears to be a woman sitting on a chair with a phone and a bag, possibly related to the topic of payment of local taxes and issuance of certificates at once.",
-      "caption_model_scores": [0.48899954557418823],
-      "llm_model_scores": [0.2997598350048065]
-    },
-    {
-      "image_id": "7.jpg",
-      "caption_model": "a train is traveling down the road with buildings in the background",
-      "llm_model": "The Subway Line 8 Extension (Byeolnae Line) is set to start operations in August, as indicated by the image.",
-      "caption_model_scores": [0.4367663264274597],
-      "llm_model_scores": [0.07743357121944427]
-    }
-  ]
+    "caption_model_wins": 1,
+    "llm_model_wins": 6,
+    "results": [
+        {
+            "image_id": "1.jpg",
+            "caption_model": "a pile of stuff with a red sign that says no litter",
+            "llm_model": "The image appears to be a pile of junk and other waste items, likely related to the topic of reducing waste and banning disposable products.",
+            "caption_model_scores": [
+                0.36841118335723877
+            ],
+            "llm_model_scores": [
+                0.313215970993042
+            ]
+        },
+        {
+            "image_id": "2.jpg",
+            "caption_model": "a bus with people standing in front of it",
+            "llm_model": "People waiting for a bus are residents of the Seoul metropolitan area on their way home from work on a Monday evening.",
+            "caption_model_scores": [
+                0.39296770095825195
+            ],
+            "llm_model_scores": [
+                0.18742045760154724
+            ]
+        },
+        {
+            "image_id": "3.jpg",
+            "caption_model": "a group of people are cleaning a room",
+            "llm_model": "The image shows people moving into a house.",
+            "caption_model_scores": [
+                0.45259708166122437
+            ],
+            "llm_model_scores": [
+                0.3950660228729248
+            ]
+        },
+        {
+            "image_id": "4.jpg",
+            "caption_model": "two people walking with bicycles in the city",
+            "llm_model": "The image appears to be a scene of people walking and biking in the city, likely in Seoul, South Korea, with abandoned bicycles being cleaned up by the government.",
+            "caption_model_scores": [
+                0.34107524156570435
+            ],
+            "llm_model_scores": [
+                0.18438836932182312
+            ]
+        },
+        {
+            "image_id": "5.jpg",
+            "caption_model": "a woman sitting on a chair with a man standing next to her and a woman standing next to her",
+            "llm_model": "The image appears to be a woman sitting in a chair with a man standing next to her.",
+            "caption_model_scores": [
+                0.5405205488204956
+            ],
+            "llm_model_scores": [
+                0.5411314964294434
+            ]
+        },
+        {
+            "image_id": "6.jpg",
+            "caption_model": "a woman holding a phone and looking at a screen with a shopping cart",
+            "llm_model": "The image appears to be a woman sitting on a chair with a phone and a bag, possibly related to the topic of 'Payment of local taxes and issuance of certificates at once...Seoul implements 'STAX electronic document wallet service''",
+            "caption_model_scores": [
+                0.48931652307510376
+            ],
+            "llm_model_scores": [
+                0.15110601484775543
+            ]
+        },
+        {
+            "image_id": "7.jpg",
+            "caption_model": "a train is traveling down the road with buildings in the background",
+            "llm_model": "The Subway Line 8 Extension (Byeolnae Line) is starting its operations in August, as seen in the image.",
+            "caption_model_scores": [
+                0.4367663264274597
+            ],
+            "llm_model_scores": [
+                0.07399109750986099
+            ]
+        }
+    ]
 }
