@@ -246,3 +246,4 @@ celery==5.4.0
 # flask[async]==3.0.3 
 # is this right expression?
 selenium==4.21.0
+waitress==3.0.0
