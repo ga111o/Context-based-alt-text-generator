@@ -5,9 +5,10 @@ test-source/testing
 main/__pycache__
 main/responses/
 main/imgs/
+main/.env
 .gpt-key
 main/source
 main/gecko
-paper/coco/annotations
-paper/coco/images
-paper/coco/code/__pycache__
+comapre/coco/annotations
+comapre/coco/images
+comapre/coco/code/__pycache__
