@@ -13,3 +13,5 @@ comapre/coco/annotations/
 comapre/coco/images/
 comapre/coco/code/__pycache__/
 compare/coco/annotations/
+compare/coco/code/__pycache__/
+compare/coco/images/
