@@ -13,40 +13,7 @@ from settings import agent
 import os
 import tempfile
 
-img_num = 50
-
-dataDir='..'
-dataType='val2017'
-instances_annFile='{}/annotations/instances_{}.json'.format(dataDir,dataType)
-coco = COCO(instances_annFile)
-
-captions_annFile = '{}/annotations/captions_{}.json'.format(dataDir, dataType)
-coco_caps = COCO(captions_annFile)
-
-
-data = []
-for _ in range(img_num):
-    imgIds = coco.getImgIds()
-    imgId = imgIds[np.random.randint(0, len(imgIds))]
-    img = coco.loadImgs(imgId)[0]
-
-    annIds = coco_caps.getAnnIds(imgIds=img['id'])
-    anns = coco_caps.loadAnns(annIds)
-
-    data.append({
-        'image_id': img['id'],
-        'image_name': img['file_name'],
-        'image_path': f"{dataDir}/images/{dataType}/{img['file_name']}",
-        'caption': [ann['caption'] for ann in anns]
-    })
-
-with open('image_captions.json', 'w') as f:
-    json.dump(data, f)
-
-##################################################
-
-
-with open('image_captions.json', 'r') as f:
+with open('input.json', 'r') as f:
     data = json.load(f)
 
 embeddings = OpenAIEmbeddings()
@@ -55,11 +22,11 @@ results = []
 caption_wins = 0
 llm_wins = 0
 
-for image_data in data:
+for image_key, image_data in data.items():
     texts = []
-    image_captions = image_data['caption']
+    image_captions = [image_data['context']]
     texts.extend(image_captions)
-    print(texts)
+    
     out = FAISS.from_texts(texts, embeddings)
 
     img_path = image_data['image_path']
@@ -73,23 +40,23 @@ for image_data in data:
     caption_scores = [float(score[1]) for score in score_caption_model[:len(image_captions)]]
     avg_caption_score = sum(caption_scores) / len(caption_scores) if caption_scores else 0
 
-    original_image_path = img_path
-
     try:
-        with Image.open(original_image_path) as img:
+        with Image.open(img_path) as img:
             if img.mode == "RGBA":
                 img = img.convert("RGB")
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
                 img.save(tmp.name)
                 image_path = tmp.name
-
                 try:
-                    user_question = f"Describe the visual elements of the image. DO NOT SAY ANYTHING ELSE"
+                    user_question = f"Explain the image based on {image_captions}. DO NOT SAY ANYTHING ELSE."
+
+                    print(f"user question: {image_captions}")
                     response = agent.run(f"{user_question}, image path: {image_path}")
                     
                 except FileNotFoundError as e:
                     print(f"Can't open: {e}")
+                    continue
     except FileNotFoundError as e:
         print(f"Can't open: {e}")
         continue
@@ -98,24 +65,20 @@ for image_data in data:
     llm_scores = [float(score[1]) for score in score_llm_model[:len(image_captions)]]
     avg_llm_score = sum(llm_scores) / len(llm_scores) if llm_scores else 0
 
-    # 승리 횟수 비교
     if avg_caption_score < avg_llm_score:
         caption_wins += 1
     elif avg_llm_score < avg_caption_score:
         llm_wins += 1
 
     result = {
-        "image_id": image_data['image_id'],
+        "image_id": image_key,
         "caption_model": caption,
         "llm_model": response,
         "caption_model_scores": caption_scores,
         "llm_model_scores": llm_scores,
-        "avg_caption_score": avg_caption_score,
-        "avg_llm_score": avg_llm_score
     }
     results.append(result)
 
-# 최종 결과를 JSON 파일의 상단에 추가
 final_results = {
     "caption_model_wins": caption_wins,
     "llm_model_wins": llm_wins,

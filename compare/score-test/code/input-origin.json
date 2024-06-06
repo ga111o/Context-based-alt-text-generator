@@ -1,0 +1,51 @@
+{
+  "1.jpg": {
+    "image_path": "./imgs/1.jpg",
+    "context": "9월부터 1천명 이상 행사 일회용품 사용 전면금지·폐기물 감량계획 의무화",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Various garbage is piled up, and there is a prohibition mark in the middle."
+  },
+  "2.jpg": {
+    "image_path": "./imgs/2.jpg",
+    "context": "서울동행버스, 퇴근길도 수도권 주민과 동행…6.10.(월) 전 노선 확대 운행",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Two people are waiting for a bus that says  '서울동행버스' at the station."
+  },
+  "3.jpg": {
+    "image_path": "./imgs/3.jpg",
+    "context": "서울시청_침수취약 반지하 가구 신속한 대피돕는 `동행파트너` 활동 시작",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Several people are organizing a house filled with water."
+  },
+  "4.jpg": {
+    "image_path": "./imgs/4.jpg",
+    "context": "아파트·상가에 버려져 불편 주는 방치자전거, 서울시가 치워드려요.",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Two people clean up the abandoned bicycle."
+  },
+  "5.jpg": {
+    "image_path": "./imgs/5.jpg",
+    "context": "야간, 휴일에도 진료하는 병원을 찾고 있다면 우리아이 안심 의료기관을 이용해 보세요",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "The family is being examined on Sunday evening."
+  },
+  "6.jpg": {
+    "image_path": "./imgs/6.jpg",
+    "context": "지방세 납부와 증명발급을 한번에…서울시, `STAX 전자문서지갑 서비스` 시행",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "A person holds a 'Seoul tax payment app' and there is money around."
+  },
+  "7.jpg": {
+    "image_path": "./imgs/7.jpg",
+    "context": "지하철 8호선 연장(별내선) 영업시운전 개시…8월 중 개통",
+    "language": "English",
+    "title": "서울 시청",
+    "alt": "Pink Line 8 subway image"
+  }
+}
