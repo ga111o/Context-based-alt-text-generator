@@ -13,13 +13,7 @@ import DEBUG
 if DEBUG.PRINT_LOG_BOOLEN:
     print("========= in the download-img.py ==============")
 
-gecko_driver_path = "./gecko/geckodriver"
-
-options = webdriver.FirefoxOptions()
-options.add_argument('--headless')
-
-service = Service(executable_path=gecko_driver_path)
-driver = webdriver.Firefox(service=service, options=options)
+driver = DEBUG.DRIVER
 
 if len(sys.argv) > 4:
     session = sys.argv[1]
