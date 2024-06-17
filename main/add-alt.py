@@ -1,4 +1,4 @@
-from tools import ImageCaptionTool, ObjectDetectionTool
+from tools import ImageCaptionTool
 from settings import agent
 from PIL import Image
 import os
@@ -6,8 +6,6 @@ import json
 import tempfile
 import sys
 import DEBUG
-
-tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
 if len(sys.argv) > 1:
     session = sys.argv[1]
@@ -17,29 +15,13 @@ with open(f'./source/{session}/responses/input.json', 'r', encoding='utf-8') as 
 
 image_files = list(image_info.keys())
 
-if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:
-    test_path = f'./source/{session}/responses/'
-    os.makedirs(test_path, exist_ok=True)
-    with open(os.path.join(test_path, f'test1-{session}'), 'w') as f:
-        pass
-
 # todo
 # 이 파트 함수든 뭐든으로 만들어서 깔끔하게 정리
 for image_name in image_files:
     original_image_path = os.path.join("source", session, "imgs", image_name)
-    if DEBUG.PRINT_LOG_BOOLEN:
-        print("---original img path:", original_image_path)
 
     if not os.path.exists(original_image_path):
-        if DEBUG.PRINT_LOG_BOOLEN:
-            print(f"---can't find: {original_image_path}")
         continue
-
-    if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:
-        test_path = f'./source/{session}/responses/'
-        os.makedirs(test_path, exist_ok=True)
-        with open(os.path.join(test_path, f'test2-{session}'), 'w') as f:
-            pass
 
     try:
         with Image.open(original_image_path) as img:
@@ -49,43 +31,20 @@ for image_name in image_files:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
                 img.save(tmp.name)
                 image_path = tmp.name
-                
-                if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:
-                    print("---temp img path:", image_path)
-
-                    test_path = f'./source/{session}/responses/'
-                    os.makedirs(test_path, exist_ok=True)
-                    with open(os.path.join(test_path, f'test2.1-{session}'), 'w') as f:
-                        pass
 
                 try:
                     context = image_info[image_name]["context"]
                     language = image_info[image_name]["language"]
                     title = image_info[image_name]["title"]
-                    
-                    # user_question = f"Describe the visual elements of the image in one line based {context}. and translate to {language}"
-                    user_question = f"image's article title is {title}."
+
+                    user_question = f"image's article title is {title} and image's context is {context}."
                     response = agent.run(f"{user_question}, image path: {image_path}")
-                    
-                    if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:
-                        test_path = f'./source/{session}/responses/'
-                        os.makedirs(test_path, exist_ok=True)
-                        with open(os.path.join(test_path, f'test2.2-{session}'), 'w') as f:
-                            pass
 
                 except FileNotFoundError as e:
                     print(f"can't open: {e}")
     except FileNotFoundError as e:
         print(f"can't open: {e}")
         continue
-    
-    if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:
-        test_path = f'./source/{session}/responses/'
-        os.makedirs(test_path, exist_ok=True)
-        with open(os.path.join(test_path, f'test3-{session}'), 'w') as f:
-            pass
-    
-    print("---response:", response)
     
     response_file_path = os.path.join("source", session, "responses", "output.json")
     
@@ -97,12 +56,6 @@ for image_name in image_files:
                 data = {}
     else:
         data = {}
-
-    if DEBUG.CREATE_FILE_FOR_CHECK_LINE_BOOLEN:
-        test_path = f'./source/{session}/responses/'
-        os.makedirs(test_path, exist_ok=True)
-        with open(os.path.join(test_path, f'test4-{session}'), 'w') as f:
-            pass
     
     data[image_name] = {"image_name": image_name, "response": response}
     

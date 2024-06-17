@@ -19,4 +19,4 @@ options.add_argument('--headless')
 service = Service(executable_path=DRIVER_PATH)
 DRIVER = webdriver.Firefox(service=service, options=options)
 
-VERBOSE = True
+VERBOSE = False

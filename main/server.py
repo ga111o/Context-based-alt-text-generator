@@ -100,8 +100,6 @@ async def get_url_n_img():
 
     if wait_for_file(f"./{response_folder}/output.json"):
         if(DEBUG.PRINT_LOG_BOOLEN):
-            print("확장 프로그램에게 '`output.json`이 생겼어요!'를 알려주는 방법이 뭐가 있을까..")
-            print("`output.json`이 업데이트 되었다는 것도 체크 가능한데, 업데이트 되었다는 걸 알려주는 방법을 모르겠네...")
             return f"url: {url}, download done & generate output.json"
     else:
         return "failed(timeout)"
@@ -126,6 +124,6 @@ def intput_json(user_input):
     
 if __name__ == "__main__":
     from waitress import serve
-    # serve(app, port=9990)
-    app.run(debug=True, port=9990)
+    serve(app, port=9990)
+    # app.run(debug=True, port=9990)
 

@@ -37,11 +37,6 @@ try:
 
     for i, image in enumerate(images):
         alt_text = image.get_attribute('alt')
-        # if alt_text:
-        #     if DEBUG.PRINT_LOG_BOOLEN:
-        #         print(f"===============skipping img with alt: {alt_text}")
-            # continue  // alt 있어도 일단 다운로드 하도록
-
         src = image.get_attribute('src')
         
         if src:
@@ -56,13 +51,13 @@ try:
             
             if image_original_name.endswith('.svg'):
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"===============skipping SVG img: {image_original_name}")
+                    print(f"skipping SVG img: {image_original_name}")
                 continue
             
             MAX_FILENAME_LENGTH = 255
             if len(image_original_name) > MAX_FILENAME_LENGTH:
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"=============== name is too long.... skipping {image_original_name}")
+                    print(f"name is too long.... skipping {image_original_name}")
                 continue
                 
             image_file = os.path.join(img_folder, image_original_name)
@@ -72,20 +67,20 @@ try:
                 
             try:
                 with Image.open(image_file) as img:
-                    img.verify()  ## i supper luv verify().... 와 정상적인 이미지만 어케 골라내지 했는데 했는데 이게 되네
+                    img.verify()
                 with Image.open(image_file) as img:
                     if img.mode == 'RGBA':
                         img = img.convert('RGB')
                         img.save(image_file, 'JPEG')
                     if img.width < 100 or img.height < 100:
                         if DEBUG.PRINT_LOG_BOOLEN:
-                            print(f"===============small img({img.width}x{img.height}): {image_original_name} ")
+                            print(f"small img({img.width}x{img.height}): {image_original_name} ")
                         os.remove(image_file)
                         continue
                     
             except (UnidentifiedImageError, OSError) as e:
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"===============skipping invalid img: {image_original_name} error: {e}")
+                    print(f"skipping invalid img: {image_original_name} error: {e}")
                 os.remove(image_file)
                 continue
 
@@ -102,8 +97,8 @@ try:
                 print(f"download {image_file}")
                 
     if DEBUG.PRINT_LOG_BOOLEN:
-        print(f"===============session: {session} ==================")
-        print(f"===============download: {len(images)} imgs ==================")
+        print(f"session: {session}")
+        print(f"download: {len(images)} imgs")
 
 finally:
     driver.quit()
