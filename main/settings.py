@@ -6,10 +6,10 @@ from tools import ImageCaptionTool, ObjectDetectionTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
+# from langchain.schema import SystemMessage
 import DEBUG
 
-
-tools = [ImageCaptionTool(), ObjectDetectionTool()]
+from langchain_core.messages.system import SystemMessage
 
 def get_image_caption(image_path):
     """
@@ -28,6 +28,7 @@ def get_image_caption(image_path):
     # 나중에 cuda로 돌린다면, half로 돌리는 게 좋을듯
     # processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
     # model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = "cpu"
 
     processor = BlipProcessor.from_pretrained(model_name)
@@ -82,7 +83,7 @@ elif DEBUG.SELECT_LLM == 2:
         model = "llama3:8b",    
         temperature=0.1,
         streaming=True,
-        callbacks=[StreamingStdOutCallbackHandler()]
+        callbacks=[StreamingStdOutCallbackHandler()],
     )
 
 
@@ -92,12 +93,24 @@ conversational_memory = ConversationBufferWindowMemory(
     return_messages=True
 )
 
+tools = [ImageCaptionTool(), ObjectDetectionTool()]
+
 agent = initialize_agent(
     agent="chat-conversational-react-description",
     tools=tools,
     llm=llm,
     max_iterations=5,
-    verbose=True,
+    verbose=DEBUG.VERBOSE,
     memory=conversational_memory,
     early_stopping_method="generate",
+    # agent_kwargs={
+    #     "system_message": SystemMessage(content="""
+    #         You are an image descriptor for blind people.
+
+    #         Explain the alternative text for the image.
+
+    #         You only explain the core of the visual information in the image.            
+    #         """
+    #     ),
+    # },
 )

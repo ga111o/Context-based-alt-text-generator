@@ -126,4 +126,6 @@ def intput_json(user_input):
     
 if __name__ == "__main__":
     from waitress import serve
-    serve(app, port=9990)
+    # serve(app, port=9990)
+    app.run(debug=True, port=9990)
+

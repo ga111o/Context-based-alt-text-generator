@@ -17,13 +17,7 @@ class ImageCaptionTool(BaseTool):
 
         model_name = "Salesforce/blip-image-captioning-base"
         
-        # if select_device ? device = "cpu" : device = "cuda"
-        if DEBUG.SELECT_DEVICE == 1:
-            device = "cpu"
-        elif DEBUG.SELECT_DEVICE == 2:
-            device = "cuda"
-        elif DEBUG.SELECT_DEVICE == 3:
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         processor = BlipProcessor.from_pretrained(model_name)
         model = BlipForConditionalGeneration.from_pretrained(model_name).to(device)
