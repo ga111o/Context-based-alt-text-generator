@@ -8,6 +8,7 @@ from PIL import Image
 import torch
 # from langchain.schema import SystemMessage
 import DEBUG
+from langchain.prompts import SystemMessagePromptTemplate, ChatPromptTemplate
 
 from langchain_core.messages.system import SystemMessage
 
@@ -71,11 +72,26 @@ def detect_objects(image_path):
     return detections
 
 
+system_message_template = SystemMessagePromptTemplate.from_template("""
+            You are an image descriptor for blind people.
+
+            Explain the alternative text for the image.
+
+            You only explain the core of the visual information in the image.
+                                                                    """)
+
+chat_template = ChatPromptTemplate.from_messages([system_message_template])
+messages = chat_template.format_messages()
+
+prompt = ChatPromptTemplate.from_messages(messages=messages)
+
+
 if DEBUG.SELECT_LLM == 1:
     llm = ChatOpenAI(
         model="gpt-3.5-turbo",
         temperature=0.1,
         streaming=True,
+        prompt = prompt,
         callbacks=[StreamingStdOutCallbackHandler()],
     )
 elif DEBUG.SELECT_LLM == 2:
@@ -83,6 +99,7 @@ elif DEBUG.SELECT_LLM == 2:
         model = "llama3:8b",    
         temperature=0.1,
         streaming=True,
+        prompt = prompt,
         callbacks=[StreamingStdOutCallbackHandler()],
     )
 
@@ -94,6 +111,7 @@ conversational_memory = ConversationBufferWindowMemory(
 )
 
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
+
 
 agent = initialize_agent(
     agent="chat-conversational-react-description",
