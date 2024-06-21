@@ -18,7 +18,7 @@ CORS(app)
 DEBUG_DOWNLOADIMG = False
 
 @app.route("/")
-def working():
+def check_working():
 	return "working..."
 
 def wait_for_file(file_path, timeout=60):
@@ -96,7 +96,7 @@ async def get_url_n_img():
     title = request.args.get("title", default="", type=str)
     
     subprocess.call(["python", "download-img.py", session, url, language, title])
-    subprocess.call(["python", "add-alt.py", session])
+    subprocess.call(["python", "generate-alt.py", session])
 
     if wait_for_file(f"./{response_folder}/output.json"):
         if(DEBUG.PRINT_LOG_BOOLEN):
