@@ -6,6 +6,17 @@ from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageP
 from PIL import Image
 import torch
 
+class FinalTool(BaseTool):
+    name = "Final tool"
+    description = "This is the last tool you'll use, and it's essential before we can give our final answer."
+    def _run(title, context):
+        text = "The title of the website where the image is located is {title} and the text surrounding the image is {context}. Describe the image in one line based on the title of the website and the text surrounding it."
+        return text
+    
+    def _arun(self, query: str):
+        raise NotImplementedError("This tool does not support async")
+
+
 class ImageCaptionTool(BaseTool):
     name = "Image captioner"
     description = "Use this tool when given the path to an image that you would like to be described. " \
