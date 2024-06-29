@@ -5,7 +5,6 @@ from langchain.tools import BaseTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
-import DEBUG
 
 class ImageCaptionTool(BaseTool):
     name = "Image captioner"
