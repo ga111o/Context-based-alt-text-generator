@@ -16,7 +16,11 @@
       </select>
       <label> <input type="checkbox" id="debugMode" /> Debug Mode </label>
       <label for="apiKey">OpenAI API Key:</label>
-      <input type="text" id="apiKey" /><br /><br />
+      <input type="text" id="apiKey" />
+      <div id="apiKeyError" style="color: red; display: none">
+        Invalid API Key
+      </div>
+      <br /><br />
       <button id="save">save</button>
     </div>
     <script src="options.js"></script>
