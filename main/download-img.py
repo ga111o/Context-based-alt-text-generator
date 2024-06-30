@@ -55,6 +55,13 @@ CREATE TABLE IF NOT EXISTS images (
 """)
 conn.commit()
 
+def get_image_hash(image_path):
+    hasher = hashlib.sha256()
+    with open(image_path, 'rb') as img_file:
+        buf = img_file.read()
+        hasher.update(buf)
+    return hasher.hexdigest()
+
 response_data = {}
 
 try:
@@ -111,8 +118,7 @@ try:
                 continue
 
             with open(image_file, 'rb') as img_file:
-                img_data = img_file.read()
-                img_hash = hashlib.sha256(img_data).hexdigest()
+                img_hash = get_image_hash(image_file)
 
             cursor.execute("SELECT * FROM images WHERE hash = ?", (img_hash,))
             existing_image = cursor.fetchone()
