@@ -4,14 +4,16 @@ import os
 import json
 import tempfile
 import sys
-import DEBUG
 from langchain.agents import initialize_agent, AgentType
 from langchain.chat_models import ChatOllama, ChatOpenAI
 from langchain.callbacks import StreamingStdOutCallbackHandler
-from langchain.chains.conversation.memory import ConversationBufferWindowMemory
-from tools import ImageCaptionTool, ObjectDetectionTool
+from tools import ImageCaptionTool, ObjectDetectionTool, TranslateTool
 import DEBUG
+import hashlib
+import sqlite3
 
+if DEBUG.PRINT_LOG_BOOLEN:
+    print("========= in the download-img.py ==============")
 
 if len(sys.argv) > 1:
     session = sys.argv[1]
@@ -24,6 +26,14 @@ image_files = list(image_info.keys())
 key_path = f'./source/{session}/responses/key'
 with open(key_path, 'r', encoding='utf-8') as file:
     api_key = file.read()
+
+db_folder = "./database"
+
+db_path = os.path.join(db_folder, "images.db")
+
+conn = sqlite3.connect(db_path)
+cursor = conn.cursor()
+
 
 if DEBUG.SELECT_LLM == 1:
     llm = ChatOpenAI(
@@ -41,27 +51,70 @@ elif DEBUG.SELECT_LLM == 2:
         callbacks=[StreamingStdOutCallbackHandler()],
     )
 
-conversational_memory = ConversationBufferWindowMemory(
-    memory_key="chat_history",
-    k=0,
-    return_messages=True
-)
-
 tools = [ImageCaptionTool(), ObjectDetectionTool()]
 
 agent = initialize_agent(
-    # agent="chat-conversational-react-description",
     agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
     tools=tools,
     llm=llm,
     max_iterations=5,
     verbose=DEBUG.VERBOSE,
-    memory=conversational_memory,
     early_stopping_method="generate",
     )
 
-for image_name in image_files:
-    original_image_path = os.path.join("source", session, "imgs", image_name)
+def get_image_hash(image_path):
+    hasher = hashlib.sha256()
+    with open(image_path, 'rb') as img_file:
+        buf = img_file.read()
+        hasher.update(buf)
+    return hasher.hexdigest()
+
+def check_image_in_db(conn, image_name, original_url, context, language, image_hash):
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, output FROM images WHERE image_name=? AND original_url=? AND context=? AND language=? AND hash=?
+    """, (image_name, original_url, context, language, image_hash))
+    return cursor.fetchone()
+
+def update_image_output(conn, image_id, output):
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE images SET output=? WHERE id=?
+    """, (output, image_id))
+    conn.commit()
+
+def insert_image(conn, image_name, original_url, img_path, context, language, title, image_hash, output):
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, output)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (image_name, original_url, img_path, context, language, title, image_hash, output))
+    conn.commit()
+
+def invoke_agent(language, title, context, image_path):
+    if language == "Korean":
+        user_question = f"너는 이미지 속 시각적인 객체들을 한 줄로 설명해야돼. 웹사이트의 제목과 주변에 위치한 텍스트를 바탕으로 이미지의 시각적인 정보를 한 줄로 설명해. 이미지가 있는 웹사이트의 제목은 {title}이야. 그리고 이미지 주변에 위치한 텍스트는 {context}이야. 너는 최종적으로 답변을 한국어로 번역해야해."
+        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Korean")
+    elif language == "Japanese":
+        user_question = f"ウェブサイトのタイトルと周囲のテキストに基づいて、画像を 1 行で記述する。ウェブサイトのタイトルは{title}で、画像を囲むテキストは{context}です。君は最終的に答えを日本語に翻訳しなければならない。"
+        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Japanese")
+    elif language == "Chinese":
+        user_question = f"图像的文章标题为 {title}，图像的上下文为 {context}。最后您需要将答案翻译成中文。"
+        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Chinese")
+    elif language == "Spanish":
+        user_question = f"Describa la imagen en una línea basándose en el título del sitio web y el texto que la rodea. El título del sitio web es {title}, y el texto que rodea la imagen es {context}. Al final tendrás que traducir las respuestas al español."
+        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: spanish")
+    else:
+        user_question = f"Describe the image in one line based on the title of the website and the surrounding text. The Website title is {title}, and the text surrounding the image is {context}."
+        return agent.invoke(f"{user_question}, image path: {image_path}")
+
+image_info_path = os.path.join("source", session, "responses", "input.json")
+
+with open(image_info_path, "r", encoding="utf-8") as file:
+    image_info = json.load(file)
+
+for image_name, image_data in image_info.items():
+    original_image_path = image_data["image_path"]
 
     if not os.path.exists(original_image_path):
         continue
@@ -79,22 +132,23 @@ for image_name in image_files:
                     context = image_info[image_name]["context"]
                     language = image_info[image_name]["language"]
                     title = image_info[image_name]["title"]
+                    original_url = image_data["original_url"]
+
+                    image_hash = get_image_hash(image_path)  # 이미지 해시화
                     
-                    if language == "Korean":
-                        user_question = f"너는 이미지 속 시각적인 객체들을 한 줄로 설명해야돼. 웹사이트의 제목과 주변에 위치한 텍스트를 바탕으로 이미지의 시각적인 정보를 한 줄로 설명해. 이미지가 있는 웹사이트의 제목은 {title}이야. 그리고 이미지 주변에 위치한 텍스트는 {context}이야. 너는 최종적으로 답변을 한국어로 번역해야해."
-                        response = agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Korean")
-                    elif language == "Japanese":
-                        user_question = f"ウェブサイトのタイトルと周囲のテキストに基づいて、画像を 1 行で記述する。ウェブサイトのタイトルは{title}で、画像を囲むテキストは{context}です。君は最終的に答えを日本語に翻訳しなければならない。"
-                        response = agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Japanese")
-                    elif language == "Chinese":
-                        user_question = f"图像的文章标题为 {title}，图像的上下文为 {context}。最后您需要将答案翻译成中文。"
-                        response = agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Chinese")
-                    elif language == "Spanish":
-                        user_question = f"Describa la imagen en una línea basándose en el título del sitio web y el texto que la rodea. El título del sitio web es {title}, y el texto que rodea la imagen es {context}. Al final tendrás que traducir las respuestas al español."
-                        response = agent.invoke(f"{user_question}, image path: {image_path}, translate_language: spanish")
+                    # DB에서 이미지 확인
+                    db_result = check_image_in_db(conn, image_name, original_url, context, language, image_hash)
+                    
+                    if db_result:
+                        image_id, db_output = db_result
+                        if db_output:
+                            response = {"output": db_output}  # 기존 output 사용
+                        else:
+                            response = invoke_agent(language, title, context, image_path)
+                            update_image_output(conn, image_id, response['output'])  # DB에 output 업데이트
                     else:
-                        user_question = f"Describe the image in one line based on the title of the website and the surrounding text. The Website title is {title}, and the text surrounding the image is {context}."
-                        response = agent.invoke(f"{user_question}, image path: {image_path}")
+                        response = invoke_agent(language, title, context, image_path)
+                        insert_image(conn, image_name, original_url, image_path, context, language, title, image_hash, response['output'])  # DB에 새 이미지 삽입
 
                 except FileNotFoundError as e:
                     print(f"can't open: {e}")
@@ -117,3 +171,5 @@ for image_name in image_files:
     
     with open(response_file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+conn.close()  # DB 연결 종료

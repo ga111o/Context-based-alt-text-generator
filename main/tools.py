@@ -5,13 +5,18 @@ from langchain.tools import BaseTool
 from transformers import BlipProcessor, BlipForConditionalGeneration, DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import torch
+from langchain_community.document_transformers import DoctranTextTranslator
+from langchain_core.documents import Document
 
-class FinalTool(BaseTool):
-    name = "Final tool"
-    description = "This is the last tool you'll use, and it's essential before we can give our final answer."
-    def _run(title, context):
-        text = "The title of the website where the image is located is {title} and the text surrounding the image is {context}. Describe the image in one line based on the title of the website and the text surrounding it."
-        return text
+class TranslateTool(BaseTool):
+    name = "Translate tool"
+    description = "Use this tool to translate your answers after you've given your answers and translate_language."
+    
+    def _run(self, answers):
+        text = [Document(page_content=answers)]
+        qa_translator = DoctranTextTranslator(language="korean")
+        translated_text = qa_translator.transform_documents(text)
+        return translated_text
     
     def _arun(self, query: str):
         raise NotImplementedError("This tool does not support async")

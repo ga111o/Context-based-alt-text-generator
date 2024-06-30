@@ -8,6 +8,8 @@ from urllib.parse import urlparse, unquote
 import base64
 from PIL import Image, UnidentifiedImageError
 import DEBUG
+import sqlite3
+import hashlib
 
 if DEBUG.PRINT_LOG_BOOLEN:
     print("========= in the download-img.py ==============")
@@ -22,11 +24,36 @@ if len(sys.argv) > 4:
 
 img_folder = f"./source/{session}/imgs"
 response_folder = f"./source/{session}/responses"
+db_folder = "./database"
 
 if not os.path.exists(img_folder):
     os.makedirs(img_folder)
 if not os.path.exists(response_folder):
     os.makedirs(response_folder)
+if not os.path.exists(db_folder):
+    os.makedirs(db_folder)
+
+db_folder = "./database"
+
+db_path = os.path.join(db_folder, "images.db")
+
+conn = sqlite3.connect(db_path)
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    image_name TEXT,
+    original_url TEXT,
+    img_path TEXT,
+    context TEXT,
+    language TEXT,
+    title TEXT,
+    hash TEXT,
+    output TEXT
+)
+""")
+conn.commit()
 
 response_data = {}
 
@@ -37,7 +64,7 @@ try:
     for i, image in enumerate(images):
         alt_text = image.get_attribute('alt')
         src = image.get_attribute('src')
-        
+
         if src:
             if src.startswith('data:image'):
                 base64_encoded_data = src.split(',')[1]
@@ -47,23 +74,23 @@ try:
                 image_content = requests.get(src).content
                 parsed_url = urlparse(src)
                 image_original_name = os.path.basename(unquote(parsed_url.path))
-            
+
             if image_original_name.endswith('.svg'):
                 if DEBUG.PRINT_LOG_BOOLEN:
                     print(f"skipping SVG img: {image_original_name}")
                 continue
-            
+
             MAX_FILENAME_LENGTH = 255
             if len(image_original_name) > MAX_FILENAME_LENGTH:
                 if DEBUG.PRINT_LOG_BOOLEN:
                     print(f"name is too long.... skipping {image_original_name}")
                 continue
-                
+
             image_file = os.path.join(img_folder, image_original_name)
-            
+
             with open(image_file, 'wb') as file:
                 file.write(image_content)
-                
+
             try:
                 with Image.open(image_file) as img:
                     img.verify()
@@ -76,11 +103,32 @@ try:
                             print(f"small img({img.width}x{img.height}): {image_original_name} ")
                         os.remove(image_file)
                         continue
-                    
+
             except (UnidentifiedImageError, OSError) as e:
                 if DEBUG.PRINT_LOG_BOOLEN:
                     print(f"skipping invalid img: {image_original_name} error: {e}")
                 os.remove(image_file)
+                continue
+
+            with open(image_file, 'rb') as img_file:
+                img_data = img_file.read()
+                img_hash = hashlib.sha256(img_data).hexdigest()
+
+            cursor.execute("SELECT * FROM images WHERE hash = ?", (img_hash,))
+            existing_image = cursor.fetchone()
+            if existing_image:
+                if DEBUG.PRINT_LOG_BOOLEN:
+                    print(f"already exist img: {image_original_name}")
+                os.remove(image_file)
+                
+                response_data[existing_image[1]] = {
+                    "image_path": existing_image[3],
+                    "context": existing_image[4],
+                    "language": existing_image[5],
+                    "title": existing_image[6],
+                    "original_url": existing_image[2],
+                    "hash": existing_image[7]
+                }
                 continue
 
             parent_element = image.find_element(By.XPATH, '..')
@@ -90,11 +138,19 @@ try:
                 "image_path": image_file,
                 "context": context,
                 "language": language,
-                "title": title
+                "title": title,
+                "original_url": src,
+                "hash": img_hash
             }
+
+            cursor.execute('''
+                INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, output)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (image_original_name, src, image_file, context, language, title, img_hash, ""))
+            conn.commit()
             if DEBUG.PRINT_LOG_BOOLEN:
                 print(f"download {image_file}")
-                
+
     if DEBUG.PRINT_LOG_BOOLEN:
         print(f"session: {session}")
         print(f"download: {len(images)} imgs")
