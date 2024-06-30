@@ -134,21 +134,20 @@ for image_name, image_data in image_info.items():
                     title = image_info[image_name]["title"]
                     original_url = image_data["original_url"]
 
-                    image_hash = get_image_hash(image_path)  # 이미지 해시화
+                    image_hash = get_image_hash(image_path)  
                     
-                    # DB에서 이미지 확인
                     db_result = check_image_in_db(conn, image_name, original_url, context, language, image_hash)
                     
                     if db_result:
                         image_id, db_output = db_result
                         if db_output:
-                            response = {"output": db_output}  # 기존 output 사용
+                            response = {"output": db_output}  
                         else:
                             response = invoke_agent(language, title, context, image_path)
-                            update_image_output(conn, image_id, response['output'])  # DB에 output 업데이트
+                            update_image_output(conn, image_id, response['output'])  
                     else:
                         response = invoke_agent(language, title, context, image_path)
-                        insert_image(conn, image_name, original_url, image_path, context, language, title, image_hash, response['output'])  # DB에 새 이미지 삽입
+                        insert_image(conn, image_name, original_url, image_path, context, language, title, image_hash, response['output'])  
 
                 except FileNotFoundError as e:
                     print(f"can't open: {e}")
@@ -172,4 +171,4 @@ for image_name, image_data in image_info.items():
     with open(response_file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
-conn.close()  # DB 연결 종료
+conn.close()  
