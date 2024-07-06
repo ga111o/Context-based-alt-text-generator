@@ -120,25 +120,36 @@ try:
             with open(image_file, 'rb') as img_file:
                 img_hash = get_image_hash(image_file)
 
-            cursor.execute("SELECT * FROM images WHERE hash = ?", (img_hash,))
-            existing_image = cursor.fetchone()
-            if existing_image:
-                if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"already exist img: {image_original_name}")
-                os.remove(image_file)
-                
-                response_data[existing_image[1]] = {
-                    "image_path": existing_image[3],
-                    "context": existing_image[4],
-                    "language": existing_image[5],
-                    "title": existing_image[6],
-                    "original_url": existing_image[2],
-                    "hash": existing_image[7]
-                }
-                continue
-
             parent_element = image.find_element(By.XPATH, '..')
             context = parent_element.text
+
+            cursor.execute("SELECT * FROM images WHERE hash = ?", (img_hash,))
+            existing_image = cursor.fetchone()
+
+            if existing_image:
+                existing_image_name, existing_original_url, existing_img_path, existing_context, existing_language, existing_title, existing_hash, _ = existing_image[1:]
+
+                if (image_original_name != existing_image_name or
+                    src != existing_original_url or
+                    context != existing_context or
+                    language != existing_language or
+                    title != existing_title or
+                    img_hash != existing_hash):
+                    if DEBUG.PRINT_LOG_BOOLEN:
+                        print(f"metadata mismatch, downloading: {image_original_name}")
+                else:
+                    if DEBUG.PRINT_LOG_BOOLEN:
+                        print(f"already exist img: {image_original_name}")
+                    os.remove(image_file)
+                    response_data[existing_image_name] = {
+                        "image_path": existing_img_path,
+                        "context": existing_context,
+                        "language": existing_language,
+                        "title": existing_title,
+                        "original_url": existing_original_url,
+                        "hash": existing_hash
+                    }
+                    continue
 
             response_data[image_original_name] = {
                 "image_path": image_file,

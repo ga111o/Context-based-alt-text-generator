@@ -13,7 +13,7 @@ import hashlib
 import sqlite3
 
 if DEBUG.PRINT_LOG_BOOLEN:
-    print("========= in the download-img.py ==============")
+    print("========= in the generate-alt.py ==============")
 
 if len(sys.argv) > 1:
     session = sys.argv[1]
