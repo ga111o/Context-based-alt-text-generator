@@ -92,21 +92,20 @@ def insert_image(conn, image_name, original_url, img_path, context, language, ti
     conn.commit()
 
 def invoke_agent(language, title, context, image_path):
-    if language == "Korean":
-        user_question = f"너는 이미지 속 시각적인 객체들을 한 줄로 설명해야돼. 웹사이트의 제목과 주변에 위치한 텍스트를 바탕으로 이미지의 시각적인 정보를 한 줄로 설명해. 이미지가 있는 웹사이트의 제목은 {title}이야. 그리고 이미지 주변에 위치한 텍스트는 {context}이야. 너는 최종적으로 답변을 한국어로 번역해야해."
-        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Korean")
-    elif language == "Japanese":
-        user_question = f"ウェブサイトのタイトルと周囲のテキストに基づいて、画像を 1 行で記述する。ウェブサイトのタイトルは{title}で、画像を囲むテキストは{context}です。君は最終的に答えを日本語に翻訳しなければならない。"
-        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Japanese")
-    elif language == "Chinese":
-        user_question = f"图像的文章标题为 {title}，图像的上下文为 {context}。最后您需要将答案翻译成中文。"
-        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: Chinese")
-    elif language == "Spanish":
-        user_question = f"Describa la imagen en una línea basándose en el título del sitio web y el texto que la rodea. El título del sitio web es {title}, y el texto que rodea la imagen es {context}. Al final tendrás que traducir las respuestas al español."
-        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: spanish")
-    else:
-        user_question = f"Describe the image in one line based on the title of the website and the surrounding text. The Website title is {title}, and the text surrounding the image is {context}."
+    translations = {
+        "Korean": "너는 이미지 속 시각적인 객체들을 한 줄로 설명해야돼. 웹사이트의 제목과 주변에 위치한 텍스트를 바탕으로 이미지의 시각적인 정보를 한 줄로 설명해. 이미지가 있는 웹사이트의 제목은 {title}이야. 그리고 이미지 주변에 위치한 텍스트는 {context}이야. 너는 최종적으로 답변을 한국어로 번역해야해.",
+        "Japanese": "ウェブサイトのタイトルと周囲のテキストに基づいて、画像を 1 行で記述する。ウェブサイトのタイトルは{title}で、画像を囲むテキストは{context}です。君は最終的に答えを日本語に翻訳しなければならない。",
+        "Chinese": "图像的文章标题为 {title}，图像的上下文为 {context}。最后您需要将答案翻译成中文。",
+        "Spanish": "Describa la imagen en una línea basándose en el título del sitio web y el texto que la rodea. El título del sitio web es {title}, y el texto que rodea la imagen es {context}. Al final tendrás que traducir las respuestas al español."
+    }
+
+    user_question = translations.get(language, f"Describe the image in one line based on the title of the website and the surrounding text. The Website title is {title}, and the text surrounding the image is {context}.")
+    
+    if language == "English":
         return agent.invoke(f"{user_question}, image path: {image_path}")
+    else:
+        return agent.invoke(f"{user_question}, image path: {image_path}, translate_language: {language}")
+
 
 image_info_path = os.path.join("source", session, "responses", "input.json")
 
