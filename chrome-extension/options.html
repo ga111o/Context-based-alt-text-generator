@@ -17,70 +17,125 @@
       input[type="text"] {
         font-size: 15px;
         border-radius: 15px;
-        height: 40px;
+        height: 30px;
         border: none;
         margin-top: 5px;
-        box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.22);
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
         padding: 5px;
         padding-left: 10px;
         transition: 0.3s;
+        margin-right: 10px;
       }
       input[type="text"]:hover {
-        box-shadow: 6px 8px 28px rgba(0, 0, 0, 0.25);
+        box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.65);
         transition: 0.3s;
       }
       input[type="text"]:focus {
-        box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.65);
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
         transition: 0.3s;
         outline: none;
+        border-radius: 5px;
       }
 
       button {
         padding: 10px 20px;
         border: none;
         cursor: pointer;
-        box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.22);
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
         transition: 0.2s;
+        height: 30px;
+        border-radius: 15px;
+        background-color: white;
       }
 
       button:hover {
-        box-shadow: 6px 8px 28px rgba(0, 0, 0, 0.25);
+        box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.65);
         transition: 0.2s;
+        border-radius: 5px;
       }
 
-      #language {
+      select {
+        height: 40px;
         font-size: 15px;
         border-radius: 15px;
-        height: 40px;
         border: none;
         margin-top: 5px;
-        box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.22);
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
         padding: 5px;
         padding-left: 10px;
         transition: 0.3s;
+        background-color: white;
+      }
+      select:hover {
+        box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.65);
+        transition: 0.3s;
+      }
+      select:focus {
+        border-radius: 5px;
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
+      }
+      .box {
+        columns: row;
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        margin-top: 20px;
+      }
+      hr {
+        color: rgba(0, 0, 0, 0.65);
+      }
+      label {
+        font-size: 18px;
+        margin-right: 10px;
+      }
+      #save {
+        height: 40px;
+        margin-top: 20px;
       }
     </style>
   </head>
   <body>
     <h1>add-alt options</h1>
-    <label for="server">Server:</label>
-    <input type="text" id="server" name="server" />
+    <div class="box">
+      <label for="server">server:</label>
+      <input type="text" id="server" name="server" />
+    </div>
 
-    <select id="language">
-      <option value="English">English</option>
-      <option value="Korean">Korean</option>
-      <option value="Japanese">Japanese</option>
-      <option value="Chinese">Chinese</option>
-      <option value="Spanish">Spanish</option>
-    </select>
+    <hr />
 
-    <label for="debugMode">Debug Mode:</label>
-    <input type="checkbox" id="debugMode" name="debugMode" />
+    <div class="box">
+      <label for="server">language:</label>
+      <select id="language">
+        <option value="English">English</option>
+        <option value="Korean">Korean</option>
+        <option value="Japanese">Japanese</option>
+        <option value="Chinese">Chinese</option>
+        <option value="Spanish">Spanish</option>
+      </select>
+    </div>
 
-    <label for="apiKey">API Key:</label>
-    <input type="text" id="apiKey" name="apiKey" />
+    <hr />
 
-    <button id="save">Save</button>
+    <div class="box">
+      <label for="apiKey">openai api-key:</label>
+      <input type="text" id="apiKey" name="apiKey" />
+      <p id="apiKeyStatus"></p>
+    </div>
+
+    <hr />
+
+    <div class="box">
+      <label for="debugMode">debug mode:</label>
+      <input type="checkbox" id="debugMode" name="debugMode" />
+    </div>
+
+    <hr />
+
+    <button id="save">save</button>
+
+    <div id="saveMessage" style="display: none">
+      <p>saved!</p>
+    </div>
 
     <script src="options.js"></script>
   </body>
