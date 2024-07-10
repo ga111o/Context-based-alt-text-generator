@@ -1,22 +1,22 @@
 let debugMode = false;
 const currentUrl = window.location.href;
-
 let session = new Date().getTime();
-
-// let server = "http://127.0.0.1:9990";
-// let server = "http://10.5.12.10:9990";
 let server = "";
+
 chrome.storage.sync.get(
-  ["language", "debugMode", "server", "apiKey"],
+  ["model", "debugMode", "server", "apiKey", "language"],
   function (data) {
-    let language = data.language || "English";
+    let model = data.model || "caption";
     debugMode = !!data.debugMode;
-    server = data.server || "http://127.0.0.1:9990";
+    server = data.server || "http://223.194.20.119:9919";
     let apiKey = data.apiKey || "";
+    let language = data.language || "English";
 
     const targetUrl = `${server}/url?url=${encodeURIComponent(
       currentUrl
-    )}&language=${language}&session=${session}&title=${document.title}`;
+    )}&model=${model}&session=${session}&title=${encodeURIComponent(
+      document.title
+    )}&language=${encodeURIComponent(language)}`;
 
     if (apiKey) {
       fetch(`${server}/apikey`, {
