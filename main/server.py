@@ -58,8 +58,11 @@ def wait_for_file(file_path, timeout=60):
 
 @app.route("/url")
 async def get_url_n_img():
+    print(f"==============full url: {request.args}")
     url = request.args.get("url", default="", type=str)
     session = request.args.get("session", default="", type=str)
+    model = request.args.get("model", default="", type=str)
+    language = request.args.get("language", default="", type=str)
 
     img_folder = f"./source/{session}/imgs"
     response_folder = f"./source/{session}/responses"
@@ -73,15 +76,30 @@ async def get_url_n_img():
         response = requests.get(url)
         if response.status_code != 200:
             print("========== ERROR: response.status_code != 200")
-    except ConnectionError:
-        print("========== ERROR: connection error 2")
+    except ConnectionError as e:
+        print(f"========== ERROR: connection error 2: {e}")
 
     language = request.args.get("language", default="", type=str)
     title = request.args.get("title", default="", type=str)
 
-    subprocess.call(["python", "download-img.py", session, url, language, title])
-    subprocess.call(["python", "generate-alt.py", session])
+    print(f"================== at server, language: {language}")
 
+    subprocess.call(["python", "download-img.py", session, url, language, title])
+    
+    if model == "caption":
+        print("only caption model")
+        subprocess.call(["python", "generate-alt-only-caption-model.py", session])
+    elif model == "llm":
+        print("caption model + llm")
+        subprocess.call(["python", "generate-alt.py", session])
+    elif model == "lmm":
+        print("lmm")
+        subprocess.call(["python", "generate-alt-lmm.py", session])
+    else:
+        subprocess.call(["python", "generate-alt-only-caption-model.py", session])
+
+    if DEBUG.DELETE_DATABASE:
+         os.remove("./database/images.db")
 
     if wait_for_file(f"./{response_folder}/output.json"):
         if(DEBUG.PRINT_LOG_BOOLEN):
