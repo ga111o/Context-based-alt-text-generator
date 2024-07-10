@@ -23,3 +23,5 @@ LOGGING = True
 
 PRINT_LOG_BOOLEN = True # true or false
 CREATE_FILE_FOR_CHECK_LINE_BOOLEN = False # true or false
+
+DELETE_DATABASE = True
