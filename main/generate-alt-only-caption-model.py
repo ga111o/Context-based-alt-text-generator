@@ -11,6 +11,7 @@ from tools import ImageCaptionTool, ObjectDetectionTool, TranslateTool
 import DEBUG
 import hashlib
 import sqlite3
+from langchain.schema import SystemMessage
 
 if DEBUG.PRINT_LOG_BOOLEN:
     print("========= in the generate-alt-only-caption-model.py ==============")
@@ -60,6 +61,15 @@ agent = initialize_agent(
     max_iterations=5,
     verbose=DEBUG.VERBOSE,
     early_stopping_method="generate",
+    agent_kwargs={
+        "system_message": SystemMessage(
+            content="""
+            You are a model that translates descriptions of images into other languages.
+
+            You don't use the tool and translate manually.
+        """
+        )
+    },
     )
 
 def get_image_hash(image_path):
@@ -94,13 +104,13 @@ def insert_image(conn, image_name, original_url, img_path, context, language, ti
 def invoke_agent(language, title, context, image_path):
     print(f"==========language: {language}")
     translations = {
-        "Korean": "Image captioner를 사용하고, Image captioner의 답변을 한국어로 번역해.",
-        "Japanese": "ウェブサイトのタイトルと周囲のテキストに基づいて、画像を 1 行で記述する。ウェブサイトのタイトルは{title}で、画像を囲むテキストは{context}です。君は最終的に答えを日本語に翻訳しなければならない。",
-        "Chinese": "图像的文章标题为 {title}，图像的上下文为 {context}。最后您需要将答案翻译成中文。",
-        "Spanish": "Describa la imagen en una línea basándose en el título del sitio web y el texto que la rodea. El título del sitio web es {title}, y el texto que rodea la imagen es {context}. Al final tendrás que traducir las respuestas al español."
+        "Korean": "Image captioner를 사용하고, Image captioner의 답변을 한국어로 번역해. 단, 번역을 할 때에는 도구를 사용하지 말고 직접 번역해야 돼.",
+        "Japanese": "Image captionerを使用し、Image captionerの回答を韓国語に翻訳してください。",
+        "Chinese": "使用图像标题器，并将图像标题器的答案翻译成您的语言。",
+        "Spanish": "Utiliza un subtitulador de imágenes y traduce la respuesta del subtitulador a tu idioma."
     }
 
-    user_question = translations.get(language, f"Describe the image in one line based on the title of the website and the surrounding text. The Website title is {title}, and the text surrounding the image is {context}.")
+    user_question = translations.get(language, f"Use an image captioner and translate the image captioner's answer into your language.")
     
     if language == "English":
         print(f"======== {user_question}, image path: {image_path}")
