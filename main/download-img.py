@@ -56,7 +56,8 @@ CREATE TABLE IF NOT EXISTS images (
     hash TEXT,
     caption_output TEXT,
     llm_output TEXT,
-    lmm_output TEXT
+    lmm_output TEXT,
+    origianl_alt TEXT
 )
 """)
 conn.commit()
@@ -135,7 +136,8 @@ try:
                 "language": language,
                 "title": title,
                 "original_url": src,
-                "hash": img_hash
+                "hash": img_hash,
+                "original_alt": alt_text
             }
 
             cursor.execute("SELECT COUNT(*) FROM images WHERE hash = ?", (img_hash,))
@@ -143,9 +145,9 @@ try:
 
             if exists == 0:
                 cursor.execute("""
-                    INSERT INTO images (image_name, original_url, img_path, context, language, title, hash)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (image_original_name, src, image_file, context, language, title, img_hash))
+                    INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, origianl_alt)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, (image_original_name, src, image_file, context, language, title, img_hash, alt_text))
                 conn.commit()
 
                 if DEBUG.PRINT_LOG_BOOLEN:
