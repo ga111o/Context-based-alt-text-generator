@@ -44,9 +44,12 @@ def before_request():
     
     if new_logs:
         for log_line in new_logs.strip().split('\n'):
-            log_time_str = log_line.split(' - ')[0]
-            log_time = datetime.strptime(log_time_str, '%Y-%m-%d %H:%M:%S,%f')
-            logs_list.append((log_time, log_line))
+            try:
+                log_time_str = log_line.split(' - ')[0]
+                log_time = datetime.strptime(log_time_str, '%Y-%m-%d %H:%M:%S,%f')
+                logs_list.append((log_time, log_line))
+            except ValueError:
+                continue
     
     logs_list[:] = [(log_time, log) for log_time, log in logs_list if current_time - log_time <= max_time]
 
@@ -184,4 +187,3 @@ if __name__ == "__main__":
     # from waitress import serve
     # serve(app, port=9990)
     app.run(port=9990)
-
