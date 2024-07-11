@@ -13,11 +13,12 @@ import hashlib
 import sqlite3
 from langchain.schema import SystemMessage
 
-if DEBUG.PRINT_LOG_BOOLEN:
-    print("========= in the generate-alt-only-caption-model.py ==============")
-
 if len(sys.argv) > 1:
     session = sys.argv[1]
+
+if DEBUG.PRINT_LOG_BOOLEN:
+    print(f" | {session} |-- in the generate-alt-only-caption-model.py")
+
 
 with open(f'./source/{session}/responses/input.json', 'r', encoding='utf-8') as file:
     image_info = json.load(file)
@@ -82,27 +83,26 @@ def get_image_hash(image_path):
 def check_image_in_db(conn, image_name, original_url, context, language, image_hash):
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT id, output FROM images WHERE image_name=? AND original_url=? AND context=? AND language=? AND hash=?
+        SELECT id, caption_output FROM images WHERE image_name=? AND original_url=? AND context=? AND language=? AND hash=?
     """, (image_name, original_url, context, language, image_hash))
     return cursor.fetchone()
 
 def update_image_output(conn, image_id, output):
     cursor = conn.cursor()
     cursor.execute("""
-        UPDATE images SET output=? WHERE id=?
+        UPDATE images SET caption_output=? WHERE id=?
     """, (output, image_id))
     conn.commit()
 
 def insert_image(conn, image_name, original_url, img_path, context, language, title, image_hash, output):
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, output)
+        INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, caption_output)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """, (image_name, original_url, img_path, context, language, title, image_hash, output))
     conn.commit()
 
-def invoke_agent(language, title, context, image_path):
-    print(f"==========language: {language}")
+def invoke_agent(language, image_path):
     translations = {
         "Korean": "Image captioner를 사용하고, Image captioner의 답변을 한국어로 번역해. 단, 번역을 할 때에는 도구를 사용하지 말고 직접 번역해야 돼.",
         "Japanese": "Image captionerを使用し、Image captionerの回答を韓国語に翻訳してください。",
@@ -113,10 +113,12 @@ def invoke_agent(language, title, context, image_path):
     user_question = translations.get(language, f"Use an image captioner and translate the image captioner's answer into your language.")
     
     if language == "English":
-        print(f"======== {user_question}, image path: {image_path}")
+        if DEBUG.PRINT_LOG_BOOLEN:
+            print(f" | {session} |---- {user_question}, image path: {image_path}")
         return agent.invoke(f"{user_question}, image path: {image_path}")
     else:
-        print(f"======== {user_question}, image path: {image_path}")
+        if DEBUG.PRINT_LOG_BOOLEN:
+            print(f" | {session} |---- {user_question}, image path: {image_path}")
         return agent.invoke(f"{user_question}, image path: {image_path}")
 
 
@@ -154,17 +156,19 @@ for image_name, image_data in image_info.items():
                         image_id, db_output = db_result
                         if db_output:
                             response = {"output": db_output}  
+                            if DEBUG.PRINT_LOG_BOOLEN:
+                                print(f" | {session} |---- already exist caption model alt text {image_name}")
                         else:
-                            response = invoke_agent(language, title, context, image_path)
+                            response = invoke_agent(language, image_path)
                             update_image_output(conn, image_id, response['output'])  
                     else:
-                        response = invoke_agent(language, title, context, image_path)
+                        response = invoke_agent(language, image_path)
                         insert_image(conn, image_name, original_url, image_path, context, language, title, image_hash, response['output'])  
 
                 except FileNotFoundError as e:
-                    print(f"can't open: {e}")
+                    print(f" | {session} |---- can't open: {e}")
     except FileNotFoundError as e:
-        print(f"can't open: {e}")
+        print(f" | {session} |---- can't open: {e}")
         continue
     
     response_file_path = os.path.join("source", session, "responses", "output.json")

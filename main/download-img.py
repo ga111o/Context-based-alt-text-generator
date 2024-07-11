@@ -11,8 +11,6 @@ import DEBUG
 import sqlite3
 import hashlib
 
-if DEBUG.PRINT_LOG_BOOLEN:
-    print("========= in the download-img.py ==============")
 
 driver = DEBUG.DRIVER
 
@@ -21,6 +19,14 @@ if len(sys.argv) > 4:
     url = sys.argv[2]
     language = sys.argv[3]
     title = sys.argv[4]
+
+    if DEBUG.PRINT_LOG_BOOLEN:
+        print(f" | {session} |-- in the download-img.py")
+
+        print(f" | {session} |---- sys.argv[1]", sys.argv[1])
+        print(f" | {session} |---- sys.argv[2]", sys.argv[2])
+        print(f" | {session} |---- sys.argv[3]", sys.argv[3])
+        print(f" | {session} |---- sys.argv[4]", sys.argv[4])
 
 img_folder = f"./source/{session}/imgs"
 response_folder = f"./source/{session}/responses"
@@ -32,8 +38,6 @@ if not os.path.exists(response_folder):
     os.makedirs(response_folder)
 if not os.path.exists(db_folder):
     os.makedirs(db_folder)
-
-db_folder = "./database"
 
 db_path = os.path.join(db_folder, "images.db")
 
@@ -50,7 +54,9 @@ CREATE TABLE IF NOT EXISTS images (
     language TEXT,
     title TEXT,
     hash TEXT,
-    output TEXT
+    caption_output TEXT,
+    llm_output TEXT,
+    lmm_output TEXT
 )
 """)
 conn.commit()
@@ -84,13 +90,13 @@ try:
 
             if image_original_name.endswith('.svg'):
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"skipping SVG img: {image_original_name}")
+                    print(f" | {session} |---- skipping SVG img")
                 continue
 
             MAX_FILENAME_LENGTH = 255
             if len(image_original_name) > MAX_FILENAME_LENGTH:
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"name is too long.... skipping {image_original_name}")
+                    print(f" | {session} |---- skipping too long name img")
                 continue
 
             image_file = os.path.join(img_folder, image_original_name)
@@ -107,13 +113,13 @@ try:
                         img.save(image_file, 'JPEG')
                     if img.width < 100 or img.height < 100:
                         if DEBUG.PRINT_LOG_BOOLEN:
-                            print(f"small img({img.width}x{img.height}): {image_original_name} ")
+                            print(f" | {session} |---- skipping too small img({img.width}x{img.height})")
                         os.remove(image_file)
                         continue
 
             except (UnidentifiedImageError, OSError) as e:
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f"skipping invalid img: {image_original_name} error: {e}")
+                    print(f" | {session} |---- skipping invalid img {e}")
                 os.remove(image_file)
                 continue
 
@@ -122,34 +128,6 @@ try:
 
             parent_element = image.find_element(By.XPATH, '..')
             context = parent_element.text
-
-            cursor.execute("SELECT * FROM images WHERE hash = ?", (img_hash,))
-            existing_image = cursor.fetchone()
-
-            if existing_image:
-                existing_image_name, existing_original_url, existing_img_path, existing_context, existing_language, existing_title, existing_hash, _ = existing_image[1:]
-
-                if (image_original_name != existing_image_name or
-                    src != existing_original_url or
-                    context != existing_context or
-                    language != existing_language or
-                    title != existing_title or
-                    img_hash != existing_hash):
-                    if DEBUG.PRINT_LOG_BOOLEN:
-                        print(f"metadata mismatch, downloading: {image_original_name}")
-                else:
-                    if DEBUG.PRINT_LOG_BOOLEN:
-                        print(f"already exist img: {image_original_name}")
-                    os.remove(image_file)
-                    response_data[existing_image_name] = {
-                        "image_path": existing_img_path,
-                        "context": existing_context,
-                        "language": existing_language,
-                        "title": existing_title,
-                        "original_url": existing_original_url,
-                        "hash": existing_hash
-                    }
-                    continue
 
             response_data[image_original_name] = {
                 "image_path": image_file,
@@ -160,20 +138,28 @@ try:
                 "hash": img_hash
             }
 
-            cursor.execute('''
-                INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, output)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (image_original_name, src, image_file, context, language, title, img_hash, ""))
-            conn.commit()
-            if DEBUG.PRINT_LOG_BOOLEN:
-                print(f"download {image_file}")
+            cursor.execute("SELECT COUNT(*) FROM images WHERE hash = ?", (img_hash,))
+            exists = cursor.fetchone()[0]
 
-    if DEBUG.PRINT_LOG_BOOLEN:
-        print(f"session: {session}")
-        print(f"download: {len(images)} imgs")
+            if exists == 0:
+                cursor.execute("""
+                    INSERT INTO images (image_name, original_url, img_path, context, language, title, hash)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (image_original_name, src, image_file, context, language, title, img_hash))
+                conn.commit()
+
+                if DEBUG.PRINT_LOG_BOOLEN:
+                    print(f" | {session} |---- inserted database {image_original_name}")
+                    print(f" | {session} |---- download {image_file}")
+            else:
+                if DEBUG.PRINT_LOG_BOOLEN:
+                    print(f" | {session} |---- already exists {image_original_name}")
+
 
 finally:
     driver.quit()
 
 with open(os.path.join(response_folder, "input.json"), "w", encoding="utf-8") as json_file:
     json.dump(response_data, json_file, indent=4, ensure_ascii=False)
+
+conn.close()

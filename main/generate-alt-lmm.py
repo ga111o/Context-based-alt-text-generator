@@ -15,12 +15,11 @@ import sqlite3
 from langchain.schema import SystemMessage
 from openai import OpenAI
 
-
-if DEBUG.PRINT_LOG_BOOLEN:
-    print("========= in the generate-alt-lmm.py ==============")
-
 if len(sys.argv) > 1:
     session = sys.argv[1]
+
+if DEBUG.PRINT_LOG_BOOLEN:
+    print(f" | {session} |-- in the generate-alt-lmm.py")
 
 with open(f'./source/{session}/responses/input.json', 'r', encoding='utf-8') as file:
     image_info = json.load(file)
@@ -53,21 +52,21 @@ def get_image_hash(image_path):
 def check_image_in_db(conn, image_name, original_url, context, language, image_hash):
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT id, output FROM images WHERE image_name=? AND original_url=? AND context=? AND language=? AND hash=?
+        SELECT id, lmm_output FROM images WHERE image_name=? AND original_url=? AND context=? AND language=? AND hash=?
     """, (image_name, original_url, context, language, image_hash))
     return cursor.fetchone()
 
 def update_image_output(conn, image_id, output):
     cursor = conn.cursor()
     cursor.execute("""
-        UPDATE images SET output=? WHERE id=?
+        UPDATE images SET lmm_output=? WHERE id=?
     """, (output, image_id))
     conn.commit()
 
 def insert_image(conn, image_name, original_url, img_path, context, language, title, image_hash, output):
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, output)
+        INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, lmm_output)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """, (image_name, original_url, img_path, context, language, title, image_hash, output))
     conn.commit()
@@ -130,7 +129,8 @@ def invoke_agent(language, title, context, url):
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-    print(response.json())
+    if DEBUG.PRINT_LOG_BOOLEN:
+        print(f" | {session} |---- {response.json()}")
     out = response.json()
     return out['choices'][0]['message']['content']
 
@@ -170,7 +170,10 @@ for image_name, image_data in image_info.items():
                     if db_result:
                         image_id, db_output = db_result
                         if db_output:
-                            response = {"output": db_output}  
+                            response = {"output": db_output}
+                            if DEBUG.PRINT_LOG_BOOLEN:
+                                print(f" | {session} |---- already exist lmm alt text {image_name}")
+
                         else:
                             response = invoke_agent(language, title, context, image_path)
                             update_image_output(conn, image_id, response)  
@@ -179,9 +182,9 @@ for image_name, image_data in image_info.items():
                         insert_image(conn, image_name, original_url, image_path, context, language, title, image_hash, response)  
 
                 except FileNotFoundError as e:
-                    print(f"can't open: {e}")
+                    print(f" | {session} |---- can't open: {e}")
     except FileNotFoundError as e:
-        print(f"can't open: {e}")
+        print(f" | {session} |---- can't open: {e}")
         continue
     
     response_file_path = os.path.join("source", session, "responses", "output.json")
