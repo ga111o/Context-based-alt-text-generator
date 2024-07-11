@@ -3,7 +3,10 @@
   "name": "add alt",
   "version": "1.0",
   "permissions": ["activeTab", "scripting", "storage"],
-  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
   "background": {
     "service_worker": "background.js"
   },
@@ -13,7 +16,7 @@
       "js": ["content.js"]
     }
   ],
-  "browser_action": {
-    "default_popup": "options.html"
+  "action": {
+    "default_popup": "popup.html"
   }
 }
