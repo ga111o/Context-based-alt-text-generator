@@ -135,7 +135,7 @@ for image_name, image_data in image_info.items():
 
     try:
         with Image.open(original_image_path) as img:
-            if img.mode == "RGBA":
+            if img.mode in ("RGBA", "P"):
                 img = img.convert("RGB")
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
