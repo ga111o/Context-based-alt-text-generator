@@ -247,3 +247,5 @@ celery==5.4.0
 # is this right expression?
 selenium==4.21.0
 waitress==3.0.0
+gevent==24.2.1
+doctran==0.0.14
