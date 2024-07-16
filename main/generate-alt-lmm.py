@@ -77,7 +77,7 @@ def invoke_agent(language, title, context, url):
     import requests
 
     translations = {
-        "Korean": f"Image captioner가 생성한 설명을 이미지 주변의 텍스트 '{context}'와 연결지어 최종적으로 이미지에 대한 자연스러운 설명을 작성하세요. 최종 설명은 원래 이미지의 설명처럼 자연스럽고 일관성이 있어야 하며, 동시에 웹페이지의 제목 '{title}'에 기반해야 합니다. 당신의 최종 설명을 {language}로 번역하세요.",
+        "Korean": f"'{title}' 웹사이트의 이미지입니다. 해당 이미지에 맞는 alt text를 작성하세요. alt text 외의 내용은 포함하면 안됩니다. 당신의 최종 설명을 {language}로 번역하고, 번역본만 남기세요.",
         "Japanese": f"画像キャプション機能によって生成された説明文を、画像の周囲にあるテキスト '{context}' とつなげ、最終的に画像の自然な説明文を記述します。最終的な説明文は、元の画像の説明文と同じくらい自然で一貫性があり、ウェブページのタイトル'{title}'に基づいている必要があります。最終的な説明文を{language}に翻訳します。",
         "Chinese": f"将图像字幕生成器生成的描述与图像周围的文本'{context}'连接起来，最终写出图像的自然描述。最终的描述应与原始图片的描述一样自然、一致，并以网页标题'{title}'为基础。将最终描述翻译成{language}。",
         "Spanish": f"Conecte la descripción generada por el subtitulador de imágenes con el texto '{context}' alrededor de la imagen para escribir finalmente una descripción natural de la imagen. La descripción final debe ser tan natural y coherente como la descripción original de la imagen, y debe basarse en el título de la página web '{title}'. Traduzca la descripción final a {language}."
@@ -94,10 +94,8 @@ def invoke_agent(language, title, context, url):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
 
-    # Path to your image
     image_path = f"{url}"
 
-    # Getting the base64 string
     base64_image = encode_image(image_path)
 
     headers = {
@@ -129,9 +127,10 @@ def invoke_agent(language, title, context, url):
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-    if DEBUG.PRINT_LOG_BOOLEN:
-        print(f" | {session} |---- {response.json()}")
     out = response.json()
+    if DEBUG.PRINT_LOG_BOOLEN:
+        print(f" | {session} |---- {out['choices'][0]['message']['content']}, token: {out['usage']['total_tokens']}")
+
     return out['choices'][0]['message']['content']
 
 
