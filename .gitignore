@@ -16,3 +16,4 @@ compare/coco/annotations/
 compare/coco/code/__pycache__/
 compare/coco/images/
 compare/score-test/code/__pycache__/
+test-source/webpage/static/
