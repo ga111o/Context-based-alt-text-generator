@@ -17,11 +17,11 @@ options.add_argument('--headless')
 service = Service(executable_path=DRIVER_PATH)
 DRIVER = webdriver.Firefox(service=service, options=options)
 
-VERBOSE = True
+VERBOSE = False
 
 LOGGING = True
 
 PRINT_LOG_BOOLEN = True # true or false
 CREATE_FILE_FOR_CHECK_LINE_BOOLEN = False # true or false
 
-DELETE_DATABASE = True
+DELETE_DATABASE = False
