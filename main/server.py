@@ -149,6 +149,12 @@ async def get_url_n_img():
         subprocess.call(["python", "generate-alt-lmm.py", session])
         if DEBUG.PRINT_LOG_BOOLEN:
             print(f" | {session} | done call generate-alt-lmm.py\n")
+    elif model == "object":
+        if DEBUG.PRINT_LOG_BOOLEN:
+            print(f" | {session} | call generate-alt-object.py")
+        subprocess.call(["python", "generate-alt-object.py", session])
+        if DEBUG.PRINT_LOG_BOOLEN:
+            print(f" | {session} | done call generate-alt-object.py\n")
     else:
         if DEBUG.PRINT_LOG_BOOLEN:
             print(f" | {session} | call generate-alt-only-caption-model.py")
