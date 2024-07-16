@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS images (
     caption_output TEXT,
     llm_output TEXT,
     lmm_output TEXT,
+    object_output TEXT,
     origianl_alt TEXT
 )
 """)
