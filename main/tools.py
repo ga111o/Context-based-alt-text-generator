@@ -30,7 +30,8 @@ class ImageCaptionTool(BaseTool):
     def _run(self, img_path):
         image = Image.open(img_path).convert('RGB')
 
-        model_name = "Salesforce/blip-image-captioning-base"
+        model_name = "Salesforce/blip-image-captioning-large"
+        # model_name = "Salesforce/blip-image-captioning-base"
         
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

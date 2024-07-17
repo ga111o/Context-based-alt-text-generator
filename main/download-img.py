@@ -10,9 +10,9 @@ from PIL import Image, UnidentifiedImageError
 import DEBUG
 import sqlite3
 import hashlib
+import time
 
-
-driver = DEBUG.DRIVER
+driver = DEBUG.DRIVER_CHROME
 
 if len(sys.argv) > 4:
     session = sys.argv[1]
@@ -121,7 +121,7 @@ try:
 
             except (UnidentifiedImageError, OSError) as e:
                 if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f" | {session} |---- skipping invalid img {e}")
+                    print(f" | {session} |---- skipping {e}")
                 os.remove(image_file)
                 continue
 
