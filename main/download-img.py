@@ -10,9 +10,12 @@ from PIL import Image, UnidentifiedImageError
 import DEBUG
 import sqlite3
 import hashlib
+from selenium.webdriver.firefox.service import Service
+from selenium import webdriver
+
 import time
 
-driver = DEBUG.DRIVER_CHROME
+DRIVER_PATH = "./gecko/geckodriver"
 
 if len(sys.argv) > 4:
     session = sys.argv[1]
@@ -28,7 +31,7 @@ if len(sys.argv) > 4:
         print(f" | {session} |---- sys.argv[3]", sys.argv[3])
         print(f" | {session} |---- sys.argv[4]", sys.argv[4])
 
-img_folder = f"./source/{session}/imgs"
+img_folder = os.path.join(os.path.dirname(__file__), "source",session,"imgs")
 response_folder = f"./source/{session}/responses"
 db_folder = "./database"
 
@@ -38,6 +41,17 @@ if not os.path.exists(response_folder):
     os.makedirs(response_folder)
 if not os.path.exists(db_folder):
     os.makedirs(db_folder)
+
+options = webdriver.FirefoxOptions()
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("user-agent={Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36}")
+options.add_argument('--headless')
+options.set_preference("browser.download.dir", img_folder)
+options.set_preference("browser.download.folderList", 2)
+options.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/jpeg,image/webp,image/png,image/gif")
+
+service = Service(executable_path=DRIVER_PATH)
+driver = webdriver.Firefox(service=service, options=options)
 
 db_path = os.path.join(db_folder, "images.db")
 
@@ -75,88 +89,145 @@ response_data = {}
 try:
     driver.get(url)
     images = driver.find_elements(By.TAG_NAME, 'img')
+    
+    for img_element in images:
+        src = img_element.get_attribute("src")
+        alt_text = img_element.get_attribute('alt')
+        
+        img_extension = os.path.splitext(os.path.basename(src))[1]
+        image_full_path = os.path.join(img_folder, os.path.basename(src))
+        image_original_name = f"{os.path.splitext(os.path.basename(src))[0]}{img_extension}"
 
-    for i, image in enumerate(images):
-        alt_text = image.get_attribute('alt')
-        src = image.get_attribute('src')
+        driver.execute_script(f"var xhr = new XMLHttpRequest(); xhr.open('GET', '{src}', true); xhr.responseType = 'blob'; xhr.onload = function(e) {{ if (this.status == 200) {{ var blob = this.response; var img = document.createElement('img'); img.src = window.URL.createObjectURL(blob); document.body.appendChild(img); var a = document.createElement('a'); a.href = img.src; a.download = '{image_original_name}'; document.body.appendChild(a); a.click(); }} }}; xhr.send();")
+        
+        relative_path = os.path.relpath(image_full_path, "/home/ga111o/document/MarkDown/kwu-idea-lab/projects/add-alt-using-llm/main")
+        
+        image_file = os.path.abspath(os.path.join(".", relative_path))
 
-        if src:
-            if src.startswith('data:image'):
-                base64_encoded_data = src.split(',')[1]
-                image_content = base64.b64decode(base64_encoded_data)
-                image_original_name = f"image_{i}.png"
-            else:
-                image_content = requests.get(src).content
-                parsed_url = urlparse(src)
-                image_original_name = os.path.basename(unquote(parsed_url.path))
+        time.sleep(0.3)
 
-            if image_original_name.endswith('.svg'):
-                if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f" | {session} |---- skipping SVG img")
-                continue
+        img_hash = get_image_hash(image_full_path)
 
-            MAX_FILENAME_LENGTH = 255
-            if len(image_original_name) > MAX_FILENAME_LENGTH:
-                if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f" | {session} |---- skipping too long name img")
-                continue
 
-            image_file = os.path.join(img_folder, image_original_name)
 
-            with open(image_file, 'wb') as file:
-                file.write(image_content)
+        parent_element = img_element.find_element(By.XPATH, '..')
+        context = parent_element.text
 
-            try:
-                with Image.open(image_file) as img:
-                    img.verify()
-                with Image.open(image_file) as img:
-                    if img.mode == 'RGBA':
-                        img = img.convert('RGB')
-                        img.save(image_file, 'JPEG')
-                    if img.width < 100 or img.height < 100:
-                        if DEBUG.PRINT_LOG_BOOLEN:
-                            print(f" | {session} |---- skipping too small img({img.width}x{img.height})")
-                        os.remove(image_file)
-                        continue
+        response_data[image_original_name] = {
+            "image_path": image_file,
+            "context": context,
+            "language": language,
+            "title": title,
+            "original_url": src,
+            "hash": img_hash,
+            "original_alt": alt_text
+        }
 
-            except (UnidentifiedImageError, OSError) as e:
-                if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f" | {session} |---- skipping {e}")
-                os.remove(image_file)
-                continue
+        cursor.execute("SELECT COUNT(*) FROM images WHERE hash = ?", (img_hash,))
+        exists = cursor.fetchone()[0]
 
-            with open(image_file, 'rb') as img_file:
-                img_hash = get_image_hash(image_file)
+        if exists == 0:
+            cursor.execute("""
+                INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, origianl_alt)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (image_original_name, src, image_file, context, language, title, img_hash, alt_text))
+            conn.commit()
 
-            parent_element = image.find_element(By.XPATH, '..')
-            context = parent_element.text
+            if DEBUG.PRINT_LOG_BOOLEN:
+                print(f" | {session} |---- download {image_original_name}")
+                print(f" | {session} |------ relative_path: {relative_path}")
+                print(f" | {session} |------ img_hash: {img_hash}")
+                print(f" | {session} |------ inserted database {image_original_name}")
+        else:
+            if DEBUG.PRINT_LOG_BOOLEN:
+                print(f" | {session} |---- already exists {image_original_name}")
 
-            response_data[image_original_name] = {
-                "image_path": image_file,
-                "context": context,
-                "language": language,
-                "title": title,
-                "original_url": src,
-                "hash": img_hash,
-                "original_alt": alt_text
-            }
 
-            cursor.execute("SELECT COUNT(*) FROM images WHERE hash = ?", (img_hash,))
-            exists = cursor.fetchone()[0]
 
-            if exists == 0:
-                cursor.execute("""
-                    INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, origianl_alt)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (image_original_name, src, image_file, context, language, title, img_hash, alt_text))
-                conn.commit()
+###########################################
 
-                if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f" | {session} |---- inserted database {image_original_name}")
-                    print(f" | {session} |---- download {image_file}")
-            else:
-                if DEBUG.PRINT_LOG_BOOLEN:
-                    print(f" | {session} |---- already exists {image_original_name}")
+    # for i, image in enumerate(images):
+    #     alt_text = image.get_attribute('alt')
+    #     src = image.get_attribute('src')
+
+    #     if src:
+    #         if src.startswith('data:image'):
+    #             base64_encoded_data = src.split(',')[1]
+    #             image_content = base64.b64decode(base64_encoded_data)
+    #             image_original_name = f"image_{i}.png"
+    #         else:
+    #             image_content = requests.get(src).content
+    #             parsed_url = urlparse(src)
+    #             image_original_name = os.path.basename(unquote(parsed_url.path))
+
+    #         if image_original_name.endswith('.svg'):
+    #             if DEBUG.PRINT_LOG_BOOLEN:
+    #                 print(f" | {session} |---- skipping SVG img")
+    #             continue
+
+    #         MAX_FILENAME_LENGTH = 255
+            
+    #         if len(image_original_name) > MAX_FILENAME_LENGTH:
+    #             if DEBUG.PRINT_LOG_BOOLEN:
+    #                 print(f" | {session} |---- skipping too long name img")
+    #             continue
+
+    #         image_file = os.path.join(image_original_name)
+
+            # with open(image_file, 'wb') as file:
+            #     file.write(image_content)
+
+            # try:
+            #     with Image.open(image_file) as img:
+            #         img.verify()
+            #     with Image.open(image_file) as img:
+            #         if img.mode in ("RGBA", "P"):
+            #             img = img.convert('RGB')
+            #             img.save(image_file, 'JPEG')
+            #         if img.width < 100 or img.height < 100:
+            #             if DEBUG.PRINT_LOG_BOOLEN:
+            #                 print(f" | {session} |---- skipping too small img({img.width}x{img.height})")
+            #             os.remove(image_file)
+            #             continue
+
+            # except (UnidentifiedImageError, OSError) as e:
+            #     if DEBUG.PRINT_LOG_BOOLEN:
+            #         print(f" | {session} |---- skipping {e}")
+            #     os.remove(image_file)
+            #     continue
+
+            # with open(image_file, 'rb') as img_file:
+            #     img_hash = get_image_hash(image_file)
+
+            # parent_element = image.find_element(By.XPATH, '..')
+            # context = parent_element.text
+
+            # response_data[image_original_name] = {
+            #     "image_path": image_file,
+            #     "context": context,
+            #     "language": language,
+            #     "title": title,
+            #     "original_url": src,
+            #     "hash": img_hash,
+            #     "original_alt": alt_text
+            # }
+
+            # cursor.execute("SELECT COUNT(*) FROM images WHERE hash = ?", (img_hash,))
+            # exists = cursor.fetchone()[0]
+
+            # if exists == 0:
+            #     cursor.execute("""
+            #         INSERT INTO images (image_name, original_url, img_path, context, language, title, hash, origianl_alt)
+            #         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            #     """, (image_original_name, src, image_file, context, language, title, img_hash, alt_text))
+            #     conn.commit()
+
+            #     if DEBUG.PRINT_LOG_BOOLEN:
+            #         print(f" | {session} |---- inserted database {image_original_name}")
+            #         print(f" | {session} |---- download {image_file}")
+            # else:
+            #     if DEBUG.PRINT_LOG_BOOLEN:
+            #         print(f" | {session} |---- already exists {image_original_name}")
 
 
 finally:
